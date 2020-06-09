@@ -1,0 +1,62 @@
+{
+  "name": "wishcart-web",
+  "version": "1.0.0",
+  "description": "My delightful Nuxt.js project",
+  "author": "Ahmad Kholid",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+  },
+  "lint-staged": {
+    "*.{js,vue}": "yarn lint"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "dependencies": {
+    "@mdi/js": "^5.3.45",
+    "@nuxtjs/dotenv": "^1.4.0",
+    "@nuxtjs/firebase": "^5.2.0",
+    "@nuxtjs/pwa": "^3.0.0-0",
+    "@vuex-orm/core": "^0.36.3",
+    "apexcharts": "^3.19.2",
+    "core-js": "2.6.10",
+    "dayjs": "^1.8.28",
+    "firebase": "^7.14.5",
+    "firebase-admin": "^8.12.1",
+    "frappe-charts": "^1.4.1",
+    "lodash.debounce": "^4.0.8",
+    "nuxt": "^2.12.2",
+    "shortid": "^2.2.15",
+    "swiper": "^5.4.1",
+    "v-tooltip": "^2.0.3",
+    "vee-validate": "^3.3.0",
+    "vue-apexcharts": "^1.5.3",
+    "vue-awesome-swiper": "^4.1.1",
+    "vue-mdijs": "^0.4.15",
+    "vue-perfect-scrollbar": "^0.2.1",
+    "vue-toastification": "^1.7.1",
+    "vuelidate": "^0.7.5"
+  },
+  "devDependencies": {
+    "@nuxtjs/eslint-config": "^2.0.0",
+    "@nuxtjs/eslint-module": "^1.0.0",
+    "@nuxtjs/tailwindcss": "^1.0.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-nuxt": ">=0.4.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "^4.0.0",
+    "lint-staged": "^10.0.0",
+    "node-sass": "^4.14.1",
+    "prettier": "^1.19.1",
+    "sass-loader": "^8.0.2"
+  }
+}
