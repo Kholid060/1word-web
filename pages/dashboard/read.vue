@@ -1,17 +1,14 @@
 <template>
   <div class="read-now">
-    <div class="categories mb-12 flex items-center">
+    <div class="categories mb-12 overflow-auto pb-4 flex items-center">
       <button-ui
         :plain="activeCat !== 'all'"
         :type="activeCat === 'all' ? 'primary' : 'default'"
+        class="mr-2"
         @click="activeCat = 'all'"
       >
         All
       </button-ui>
-      <div
-        class="h-10 mx-4"
-        style="width: 1px; background-color: #e2e8f0"
-      ></div>
       <button-ui
         v-for="category in categories"
         :key="category"
@@ -23,39 +20,50 @@
         {{ category }}
       </button-ui>
     </div>
-    <div v-for="item in sources" :key="item.id" class="flex items-start mb-6">
-      <flag-ui
-        :code="item.id | getLang('country')"
-        size="60"
-        class="inline-block shadow-xl mr-5"
-      ></flag-ui>
-      <div>
-        <a
+    <div v-for="item in sources" :key="item.id" class="mb-8">
+      <div class="mb-6 flex items-center">
+        <flag-ui
+          :code="item.id | getLang('country')"
+          size="60"
+          class="inline-block shadow-xl mr-5"
+        ></flag-ui>
+        <div class="inline-block">
+          <p class="font-semibold">
+            {{ item.id | getLang('name') }}
+          </p>
+          <p class="text-lighter">
+            {{ item.id | getLang('native') }}
+          </p>
+        </div>
+      </div>
+      <swiper :options="swiperOptions" class="pr-6">
+        <swiper-slide
           v-for="website in filterByCategory(item.sources)"
           :key="website.url"
-          :href="website.url"
-          class="inline-block pr-3 pb-2"
-          target="_blank"
-          rel="noreferrer"
+          class="pt-1 pb-4"
         >
-          <card-ui class="inline-block cursor-pointer" hover>
-            <template slot="header">
-              <div class="p-2 rounded-lg bg-light">
-                <img
-                  :src="
-                    `https://www.google.com/s2/favicons?domain=${website.url}`
-                  "
-                  height="16"
-                  width="16"
-                />
-              </div>
-              <div class="flex-grow"></div>
-              <p class="text-lighter">#{{ website.category }}</p>
-            </template>
-            <p class="text-lg font-semibold">{{ website.name }}</p>
-          </card-ui>
-        </a>
-      </div>
+          <a :href="website.url" target="_blank" rel="noreferrer">
+            <card-ui class="inline-block cursor-pointer" hover>
+              <template slot="header">
+                <div class="p-2 rounded-lg bg-light">
+                  <img
+                    :src="
+                      `https://www.google.com/s2/favicons?domain=${website.url}`
+                    "
+                    height="16"
+                    width="16"
+                  />
+                </div>
+                <div class="flex-grow"></div>
+                <p class="text-lighter">#{{ website.category }}</p>
+              </template>
+              <p class="text-lg font-semibold text-overflow">
+                {{ website.name }}
+              </p>
+            </card-ui>
+          </a>
+        </swiper-slide>
+      </swiper>
     </div>
   </div>
 </template>
@@ -65,19 +73,26 @@ import { categories, sources } from '~/utils/readSources';
 export default {
   data: () => ({
     activeCat: 'all',
-    categories
+    categories,
+    swiperOptions: {
+      slidesPerView: 4.3,
+      mousewheel: true,
+      freeMode: true,
+      grabCursor: true,
+      spaceBetween: 15
+    }
   }),
   computed: {
     sources() {
-      const learns = this.$store
+      const languages = this.$store
         .$db()
-        .model('learns')
+        .model('languages')
         .all()
-        .map((learn) => learn.learnId);
+        .map((language) => language.languageId);
 
       return sources.filter((source) => {
         return (
-          learns.includes(source.id) &&
+          languages.includes(source.id) &&
           source.sources.length !== 0 &&
           this.filterByCategory(source.sources).length !== 0
         );

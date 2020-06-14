@@ -1,11 +1,13 @@
 <template>
-  <card-ui class="learn-card">
+  <card-ui>
     <div class="text-center">
       <div class="inline-block p-1 shadow-inner bg-light mb-2 rounded-lg">
-        <flag-ui :code="learnId | getLang('country')" size="65"></flag-ui>
+        <flag-ui :code="languageId | getLang('country')" size="65"></flag-ui>
       </div>
-      <p class="text-xl font-bold leading-tight">{{ learnId | getLang }}</p>
-      <p class="text-light leading-tight">{{ learnId | getLang('native') }}</p>
+      <p class="text-xl font-bold leading-tight">{{ languageId | getLang }}</p>
+      <p class="text-light leading-tight">
+        {{ languageId | getLang('native') }}
+      </p>
     </div>
     <div class="flex mt-6 justify-center">
       <div class="text-center">
@@ -21,7 +23,7 @@
         <p class="text-light">Practice</p>
       </div>
     </div>
-    <button-ui block class="mt-8" type="danger" plain @click="deleteLearn">
+    <button-ui block class="mt-8" type="danger" plain @click="deleteLanguage">
       Delete
     </button-ui>
   </card-ui>
@@ -29,29 +31,25 @@
 <script>
 export default {
   props: {
-    learnId: String,
+    languageId: String,
     wordLength: [String, Number],
     practiceLength: [String, Number]
   },
   methods: {
-    deleteLearn() {
-      this.$dialog
-        .confirm(
-          {
-            title: 'Delete',
-            body: `Are you sure want to delete <b>${this.$options.filters.getLang(
-              this.learnId
-            )}</b>?`
-          },
-          {
-            html: true,
-            okText: 'Delete',
-            customClass: 'delete-dialog'
+    deleteLanguage() {
+      this.$modal.show('confirm', {
+        title: 'Delete language',
+        text: `Are you sure want to delete ${this.$options.filters.getLang(
+          this.languageId
+        )}`,
+        btn: {
+          type: 'danger',
+          text: 'Delete',
+          handler: () => {
+            this.$emit('delete');
           }
-        )
-        .then(() => {
-          this.$emit('delete');
-        });
+        }
+      });
     }
   }
 };

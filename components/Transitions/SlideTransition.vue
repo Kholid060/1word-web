@@ -24,29 +24,22 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-$directions: 'top', 'right', 'bottom', 'left';
+$directions: (
+  'top': translateY(-10px),
+  'right': translateX(10px),
+  'bottom': translateY(10px),
+  'left': translateX(-10px)
+);
 
-@mixin transitionClass($direction, $transformValue) {
+@each $direction, $translate in $directions {
   .slide-#{$direction}-enter-active,
   .slide-#{$direction}-leave-active {
     transition: all 300ms ease;
   }
   .slide-#{$direction}-enter,
   .slide-#{$direction}-leave-to {
-    transform: $transformValue;
+    transform: $translate;
     opacity: 0;
-  }
-}
-
-@each $direction in $directions {
-  @if $direction === 'top' {
-    @include transitionClass($direction, translateY(-10px));
-  } @else if $direction == 'right' {
-    @include transitionClass($direction, translateX(10px));
-  } @else if $direction == 'bottom' {
-    @include transitionClass($direction, translateY(10px));
-  } @else if $direction == 'left' {
-    @include transitionClass($direction, translateX(-10px));
   }
 }
 </style>

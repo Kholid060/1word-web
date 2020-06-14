@@ -14,6 +14,7 @@
         class="w-full md:w-6/12 mt-4 md:mt-0 md:ml-4"
         type="primary"
         :loading="loading"
+        @click="resendVerifyEmail"
       >
         Resend verify email
       </button-ui>
@@ -27,11 +28,7 @@ export default {
   data: () => ({
     loading: false
   }),
-  middleware({ store, redirect }) {
-    if (!store.state.user) {
-      redirect('/');
-    }
-  },
+  middleware: 'authRoute',
   methods: {
     async useAnotherAccount() {
       await firebase.auth().signOut();

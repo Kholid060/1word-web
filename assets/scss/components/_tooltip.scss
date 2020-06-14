@@ -4,24 +4,35 @@
   @apply rounded-md py-2 px-3 shadow-xl text-sm;
   z-index: 88;
   background-color: rgba(0, 0, 0, 0.7);
+  transition: all .2s ease;
   color: white;
   &[aria-hidden='true'] {
     visibility: hidden;
     opacity: 0;
-    transition: opacity .5s, visibility .5s;
-    transform: scale(0.5);
   }
 
   &[aria-hidden='false'] {
     visibility: visible;
-    transform-origin: right;
-    transform: scale(1);
-    transition-duration: 250ms;
-    transition-property: opacity, transform;
-    transition-timing-function: ease;
+    opacity: 1;
   }
 }
 
 .vue-popover-theme{
   z-index: 99;
+  .wrapper {
+    transition: all .2s ease;
+  }
+  &[aria-hidden='true'] {
+    .wrapper {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+  }
+
+  &[aria-hidden='false'] {
+    .wrapper {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
 }

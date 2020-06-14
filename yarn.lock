@@ -1066,6 +1066,11 @@
     postcss "7.0.28"
     purgecss "^2.2.0"
 
+"@glidejs/glide@^3.2.4":
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@glidejs/glide/-/glide-3.4.1.tgz#8ad21f3169076e32bbfd75ed0753807662c25e90"
+  integrity sha512-C34AEcK1HjSyxilRToUL54I6KAoodojUbeRlXoruobZuG0eGm8xfDL+3kgkWj7AJK4EZtunSOYfoqMp70eDtwg==
+
 "@google-cloud/common@^2.1.1":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@google-cloud/common/-/common-2.4.0.tgz#2783b7de8435024a31453510f2dab5a6a91a4c82"
@@ -4662,6 +4667,16 @@ firebase-admin@^8.11.0, firebase-admin@^8.12.1:
     "@google-cloud/firestore" "^3.0.0"
     "@google-cloud/storage" "^4.1.2"
 
+firebase-auth-lite@^0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/firebase-auth-lite/-/firebase-auth-lite-0.8.4.tgz#978779987ef4e1e39ae1b7d25bedbb3abb8ab92f"
+  integrity sha512-bh+vFBxPaCtVhEWWor7OlVZs4ra+FPlC6AvQeiBJa1pnkW0WPVvLRJGdSXcU9KZyxEeVhyusGt6+Q27SVSpWzQ==
+
+firebase-firestore-lite@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/firebase-firestore-lite/-/firebase-firestore-lite-0.7.3.tgz#b2d3f822eca48910dd79b829df6750c4d6315778"
+  integrity sha512-LFIizJpjbaGPTl472CflXtJMQ4v2BuxSsaXcjFsUBnMgt9Pd1e1a6R4SSa8iF0iMfI9W1EiHjvdKZUFxFDurPg==
+
 firebase@^7.14.5:
   version "7.14.5"
   resolved "https://registry.yarnpkg.com/firebase/-/firebase-7.14.5.tgz#cf1be9c7f0603c6c2f45f65c7d817f6b22114a4b"
@@ -4958,6 +4973,11 @@ getpass@^0.1.1:
   integrity sha1-Xv+OPmhNVprkyysSgmBOi6YhSfo=
   dependencies:
     assert-plus "^1.0.0"
+
+glider-js@^1.7.3:
+  version "1.7.3"
+  resolved "https://registry.yarnpkg.com/glider-js/-/glider-js-1.7.3.tgz#4d397fb9de0870753953244d146a94248d4eb394"
+  integrity sha512-smiepWalDyBAUtOH6Ev06fHlcQ128OUzGLx97E/9NcR8/fR+uALUVSMytVN6z5pIqO4kDGTzINniqZV2yMf8bg==
 
 glob-all@^3.1.0:
   version "3.2.1"
@@ -8890,6 +8910,11 @@ reserved-words@^0.1.2:
   resolved "https://registry.yarnpkg.com/reserved-words/-/reserved-words-0.1.2.tgz#00a0940f98cd501aeaaac316411d9adc52b31ab1"
   integrity sha1-AKCUD5jNUBrqqsMWQR2a3FKzGrE=
 
+resize-observer-polyfill@^1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz#0e9020dd3d21024458d4ebd27e23e40269810464"
+  integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==
+
 resolve-from@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-3.0.0.tgz#b22c7af7d9d6881bc8b6e653335eebcb0a188748"
@@ -9847,10 +9872,10 @@ svgo@^1.0.0:
     unquote "~1.1.1"
     util.promisify "~1.0.0"
 
-swiper@^5.4.1:
-  version "5.4.1"
-  resolved "https://registry.yarnpkg.com/swiper/-/swiper-5.4.1.tgz#6731e000e97f8b6560c11b141ebaf559063af565"
-  integrity sha512-l2EiWe7uOXB2EBMVLtJqn51FW22wF9e24WETT+S+tuFNvSDq1gadc/hyGGsAMqFGKJKIO6q6cqk7ToVaOI+onw==
+swiper@^5.4.2:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/swiper/-/swiper-5.4.2.tgz#ed4cf60ea7100edac2703e406ae4ae2c43d33e7c"
+  integrity sha512-c6E5kDC3xAhnhdV0omIkDKLr+qNxzMfTO3Nw/T4xNAwSMoJwPvgsRoVzDBEUQbkWqwomHsvcjPMn12VQ6IHDTQ==
   dependencies:
     dom7 "^2.1.5"
     ssr-window "^2.0.0"
@@ -10478,10 +10503,25 @@ vue-eslint-parser@^7.0.0:
     esquery "^1.0.1"
     lodash "^4.17.15"
 
+vue-glide-js@^1.3.14:
+  version "1.3.14"
+  resolved "https://registry.yarnpkg.com/vue-glide-js/-/vue-glide-js-1.3.14.tgz#7e75eaad1679369c1ed69a79730c0d01809a0cbe"
+  integrity sha512-dgF+7pcsqNawU5nPE26MD7nMvfKD5zQjOE/e+xd2XccQ6GX83JYGiwAAbM1QlpA1X7Urp5aLqR214gfBunUnjw==
+  dependencies:
+    "@glidejs/glide" "^3.2.4"
+    vue "^2.5.16"
+
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
   integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
+
+vue-js-modal@^2.0.0-rc.3:
+  version "2.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/vue-js-modal/-/vue-js-modal-2.0.0-rc.3.tgz#c34b33305af10b4ccecdbb381dd58efbb19e2862"
+  integrity sha512-Q9L9FsIUMuzCKSuB41D8LxV+Yc2q+zWHzzUdWaQ2KeHPS+78+X6AAnBztVoophbjt8UXHO7rQSRgER1MMw5qsw==
+  dependencies:
+    resize-observer-polyfill "^1.5.1"
 
 vue-loader@^15.9.1:
   version "15.9.2"
@@ -10568,7 +10608,7 @@ vue-toastification@^1.7.1:
   resolved "https://registry.yarnpkg.com/vue-toastification/-/vue-toastification-1.7.1.tgz#9ee0de782115e86621832a8704115215978321c7"
   integrity sha512-T0byaYmOgyTWnROjNBZ7P2aFmHu8RS69JM7TI5kuUC4LWji05xDnuXAj/KmPibakydQTHlgrU2CeGHDp+40PKQ==
 
-vue@^2.6.11:
+vue@^2.5.16, vue@^2.6.11:
   version "2.6.11"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.11.tgz#76594d877d4b12234406e84e35275c6d514125c5"
   integrity sha512-VfPwgcGABbGAue9+sfrD4PuwFar7gPb1yl1UK1MwXoQPAw0BKSqWfoYCT/ThFrdEVWoI51dBuyCoiNU9bZDZxQ==

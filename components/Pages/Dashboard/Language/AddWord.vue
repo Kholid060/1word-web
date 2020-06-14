@@ -3,11 +3,17 @@
     <p slot="header">Add word</p>
     <form @submit.prevent="addWord" @keyup.enter="addWord">
       <div class="flex">
-        <div class="p-2 text-lighter rounded-lg word-dec bg-input mr-3">
-          <v-mdi name="mdi-message-processing"></v-mdi>
+        <div
+          v-tooltip.right="'Translate word'"
+          icon
+          class="mr-3 rounded-lg p-2 bg-input cursor-pointer"
+          :disabled="!word"
+          @click="translateWord"
+        >
+          <v-mdi :class="{ 'text-primary': word }" name="mdi-translate"></v-mdi>
         </div>
         <input-ui
-          class="flex-grow"
+          class="flex-1"
           :value="word"
           hide-details
           placeholder="Word"
@@ -51,7 +57,7 @@ export default {
         .where((word) => {
           return validateWord(word, {
             title: this.word,
-            learnId: this.$route.params.id
+            languageId: this.$route.params.id
           });
         })
         .exists();
@@ -61,7 +67,7 @@ export default {
           data: {
             title: this.word,
             meaning: this.meaning,
-            learnId: this.$route.params.id,
+            languageId: this.$route.params.id,
             timestamp: Date.now()
           }
         }).then(() => {
@@ -70,6 +76,17 @@ export default {
       } else {
         this.$toast.error(`You already add ${this.word}`);
       }
+    },
+    translateWord() {
+      const baseURL = 'https://translate.yandex.net/api/v1.5/tr.json/translate';
+
+      fetch(
+        `${baseURL}?key=${process.env.TRANSLATE_API_KEY}&text=${this.word}&lang=${this.$route.params.id}-en`
+      )
+        .then((response) => response.json())
+        .then(({ text }) => {
+          this.meaning = text[0];
+        });
     }
   }
 };
@@ -87,9 +104,6 @@ export default {
   &:focus {
     @apply shadow-xl;
     outline: none;
-    .word-dec {
-      @apply bg-input-dark;
-    }
     .hidden-input {
       opacity: 1;
       height: auto;

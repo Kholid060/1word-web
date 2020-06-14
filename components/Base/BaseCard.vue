@@ -1,3 +1,42 @@
+<template>
+  <div
+    class="card-ui relative"
+    :class="{
+      'hover:shadow-xl is-hover': hover,
+      border: outline,
+      small: small,
+      large: large,
+      disabled: disabled
+    }"
+    :style="{
+      height: height,
+      width: width
+    }"
+    @click="$emit('click', $event)"
+  >
+    <div
+      v-if="$slots.image"
+      class="card-ui__image"
+      @click="$emit('click:image', $event)"
+    >
+      <slot name="image"></slot>
+    </div>
+    <div v-if="$slots.header" class="card-ui__header flex items-center">
+      <slot name="header"></slot>
+    </div>
+    <div
+      class="card-ui__content"
+      :class="{ 'no-padding': noPaddingContent }"
+      @click="$emit('click:content', $event)"
+    >
+      <slot></slot>
+    </div>
+    <div v-if="$slots.footer" class="card-ui__footer flex items-center">
+      <slot name="footer"></slot>
+    </div>
+  </div>
+</template>
+
 <script>
 import '~/assets/scss/components/_card.scss';
 
@@ -12,78 +51,6 @@ export default {
     noPaddingContent: Boolean,
     height: [String, Number],
     width: [String, Number]
-  },
-  render(h) {
-    const { image, header, footer } = this.$slots;
-
-    const CardImage = image
-      ? h(
-          'div',
-          {
-            staticClass: 'card-ui__image',
-            on: {
-              click: (event) => this.$emit('click:image', event)
-            }
-          },
-          image
-        )
-      : null;
-
-    const CardHeader = header
-      ? h(
-          'div',
-          {
-            staticClass: 'card-ui__header flex items-center'
-          },
-          header
-        )
-      : null;
-
-    const CardFooter = footer
-      ? h(
-          'div',
-          {
-            staticClass: 'card-ui__footer flex items-center'
-          },
-          footer
-        )
-      : null;
-
-    const CardContent = h(
-      'div',
-      {
-        staticClass: 'card-ui__content',
-        class: {
-          'no-padding': this.noPaddingContent
-        },
-        on: {
-          click: () => this.$emit('click:content')
-        }
-      },
-      this.$slots.default
-    );
-
-    return h(
-      'div',
-      {
-        staticClass: 'card-ui relative',
-        class: {
-          'hover:shadow-xl is-hover': this.hover,
-          border: this.outline,
-          small: this.small,
-          large: this.large,
-          disabled: this.disabled
-        },
-        style: {
-          height: this.height,
-          width: this.width
-        },
-        on: {
-          click: (event) => this.$emit('click', event)
-        }
-      },
-      [CardImage, CardHeader, CardContent, CardFooter]
-    );
   }
 };
 </script>

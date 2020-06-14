@@ -40,6 +40,10 @@ module.exports = {
       colors: base,
       backgroundColor,
       textColor
+    },
+    container: {
+      padding: '2rem',
+      center: true
     }
   },
   variants: {

@@ -1,19 +1,17 @@
 <template>
-  <card-ui
-    hover
-    class="mt-4 learn-card cursor-pointer border border-transparent first:mt-0"
-    :class="{ 'border-primary': active }"
-  >
-    <div class="flex items-center">
-      <div class="bg-lighter flag-container p-1 rounded-lg">
-        <flag-ui :code="id | getLang('country')" size="41"></flag-ui>
-      </div>
-      <div class="pl-3">
-        <p class="leading-snug font-semibold">{{ id | getLang }}</p>
-        <p class="leading-snug text-sm text-light">
-          {{ id | getLang('native') }}
-        </p>
-      </div>
+  <card-ui hover class="language-card cursor-pointer" :class="{ active }">
+    <flag-ui
+      :code="id | getLang('country')"
+      size="51"
+      class="flag-container p-1 bg-lighter"
+    ></flag-ui>
+    <div class="ml-2 language-card__name inline-block align-middle">
+      <p class="leading-snug font-semibold text-overflow">
+        {{ id | getLang }}
+      </p>
+      <p class="leading-snug text-light text-overflow">
+        {{ id | getLang('native') }}
+      </p>
     </div>
   </card-ui>
 </template>
@@ -26,13 +24,25 @@ export default {
   }
 };
 </script>
-<style scoped lang="scss">
-.flag-container {
-  transition: transform 0.3s ease;
-}
-.learn-card:hover {
+<style lang="scss">
+.language-card {
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  &.active {
+    @apply border-primary;
+  }
   .flag-container {
-    transform: translateY(-3px);
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  &__name {
+    max-width: 80px;
+  }
+  &:hover {
+    .flag-container {
+      transform: translateY(-3px);
+    }
   }
 }
 </style>

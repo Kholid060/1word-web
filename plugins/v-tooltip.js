@@ -8,7 +8,9 @@ Vue.use(VTooltip, {
   defaultTemplate:
     '<div class="tooltip-ui" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>',
   defaultOffset: 10,
+  defaultDelay: 80,
   popover: {
-    defaultOffset: 10
+    defaultOffset: 10,
+    defaultDelay: 80
   }
 });

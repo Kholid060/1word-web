@@ -1,7 +1,7 @@
 <template>
   <div class="pagination flex justify-end items-center">
     <template v-if="!hideSelect">
-      <span class="mr-2">Rows per page: </span>
+      <span class="mr-2 hidden md:block">Rows per page: </span>
       <select-ui
         :value="perPage"
         :list="perPageList"

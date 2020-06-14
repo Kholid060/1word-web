@@ -17,34 +17,34 @@ export const getters = {
 };
 
 export const mutations = {
-  insertLearn(state, learn) {
-    Vue.set(state.entities, learn.id, learn);
+  insertLearn(state, language) {
+    Vue.set(state.entities, language.id, language);
   },
-  deleteLearn(state, learnId) {
-    Vue.delete(state.entities, learnId);
+  deleteLearn(state, languageId) {
+    Vue.delete(state.entities, languageId);
   }
 };
 
 export const actions = {
   insert({ commit }, data) {
     return new Promise((resolve) => {
-      const learn = {
+      const language = {
         id: shortid.generate(),
-        learnId: data
+        languageId: data
       };
 
-      commit('insertLearn', learn);
+      commit('insertLearn', language);
 
       resolve();
     });
   },
-  delete({ commit, state }, learnId) {
+  delete({ commit, state }, languageId) {
     return new Promise((resolve, reject) => {
-      if (typeof state.entities[learnId] === 'undefined') {
-        reject(new Error(`Can't find data with ${learnId} id`));
+      if (typeof state.entities[languageId] === 'undefined') {
+        reject(new Error(`Can't find data with ${languageId} id`));
       }
 
-      commit('deleteLearn', learnId);
+      commit('deleteLearn', languageId);
       resolve();
     });
   }

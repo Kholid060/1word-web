@@ -24,7 +24,7 @@
       You have done your practice, click button <br />
       below to go back to dashboard
     </p>
-    <nuxt-link :to="`/dashboard/learn/${$route.params.id}`" class="mt-20">
+    <nuxt-link :to="`/dashboard/language/${$route.params.id}`" class="mt-20">
       <button-ui type="primary" style="width: 200px">Go back</button-ui>
     </nuxt-link>
   </div>

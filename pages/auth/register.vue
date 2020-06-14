@@ -1,7 +1,7 @@
 <template>
   <div class="register">
     <p class="text-2xl text-light font-semibold">Create an account</p>
-    <p class="text-lighter">Fill form below to create a new account</p>
+    <p class="text-lighter">Fill forms below to create a new account</p>
     <form class="mt-10" @submit.prevent="createNewAccount">
       <input-ui
         v-model="name"
@@ -10,7 +10,7 @@
         block
         placeholder="Name"
         :error="$v.name.$invalid && $v.name.$dirty"
-        error-message="required"
+        error-message="This field must be at least 4 characters"
         height="2.8rem"
         @change="$v.name.$touch"
       ></input-ui>
@@ -45,6 +45,7 @@
         class="mt-10"
         type="primary"
         block
+        :loading="loading"
         height="2.8rem"
         :disabled="$v.$invalid"
       >
@@ -73,10 +74,11 @@ export default {
     email: '',
     password: ''
   }),
+  middleware: 'authRoute',
   validations: {
     name: {
       required,
-      minLength: minLength(3)
+      minLength: minLength(4)
     },
     email: {
       required,

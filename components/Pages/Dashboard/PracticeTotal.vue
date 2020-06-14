@@ -9,7 +9,9 @@
         {{ data.length }}
       </span>
     </p>
-    <p v-if="data.length === 0">Data empty</p>
+    <p v-if="data.length === 0" class="text-lighter text-center">
+      No data
+    </p>
     <div v-else id="practice-chart"></div>
   </card-ui>
 </template>
@@ -27,9 +29,26 @@ export default {
   watch: {
     data: {
       handler() {
-        const { labels, data } = this.fetchData();
-
-        this.chart.update({
+        this.fetchData().then(({ labels, data }) => {
+          this.chart.update({
+            labels,
+            datasets: [
+              {
+                name: 'Practice',
+                type: 'bar',
+                values: data
+              }
+            ]
+          });
+        });
+      },
+      deep: true
+    }
+  },
+  mounted() {
+    this.fetchData().then(({ labels, data }) => {
+      this.chart = new Chart('#practice-chart', {
+        data: {
           labels,
           datasets: [
             {
@@ -38,51 +57,38 @@ export default {
               values: data
             }
           ]
-        });
-      },
-      deep: true
-    }
-  },
-  mounted() {
-    const { labels, data } = this.fetchData();
-
-    this.chart = new Chart('#practice-chart', {
-      data: {
-        labels,
-        datasets: [
-          {
-            name: 'Practice',
-            type: 'bar',
-            values: data
-          }
-        ]
-      },
-      barOptions: {
-        spaceRatio: 0.2
-      },
-      tooltipOptions: {
-        formatTooltipY: (d) => `${d}x`
-      },
-      type: 'bar',
-      height: 200
+        },
+        barOptions: {
+          spaceRatio: 0.2
+        },
+        tooltipOptions: {
+          formatTooltipY: (d) => `${d}x`
+        },
+        type: 'bar',
+        height: 200
+      });
     });
   },
   methods: {
     fetchData() {
-      if (this.data.length === 0) return;
+      return new Promise((resolve, reject) => {
+        if (this.data.length === 0) reject(new Error('Empty data'));
 
-      const objectData = this.data.reduce((data, { learnId }) => {
-        const countryName = languageFilter(learnId);
+        const objectData = this.data.reduce((data, { languageId }) => {
+          const countryName = languageFilter(languageId);
 
-        data[countryName] ? (data[countryName] += 1) : (data[countryName] = 1);
+          data[countryName]
+            ? (data[countryName] += 1)
+            : (data[countryName] = 1);
 
-        return data;
-      }, {});
+          return data;
+        }, {});
 
-      return {
-        labels: Object.keys(objectData),
-        data: Object.values(objectData)
-      };
+        resolve({
+          labels: Object.keys(objectData),
+          data: Object.values(objectData)
+        });
+      });
     }
   }
 };

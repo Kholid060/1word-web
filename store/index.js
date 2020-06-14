@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VuexORM from '@vuex-orm/core';
-import firebase from '~/utils/firebase';
+import validateUserObject from '~/utils/validateUserObject';
 
 const database = new VuexORM.Database();
 
@@ -19,6 +19,7 @@ export const state = () => ({
     valid: false,
     length: 0
   },
+  openProfile: false,
   user: null
 });
 
@@ -27,10 +28,10 @@ export const mutations = {
     Vue.set(state, key, data);
   },
   setUser(state, authUser) {
-    const { uid, email, emailVerified, displayName } = authUser;
+    const { localId, email, emailVerified, displayName } = authUser;
 
     state.user = {
-      uid,
+      localId,
       email,
       emailVerified,
       displayName
@@ -44,13 +45,21 @@ export const mutations = {
 export const actions = {
   nuxtClientInit({ commit }) {
     return new Promise((resolve) => {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          commit('setUser', user);
-        }
+      const userKey = Object.keys(localStorage).find((key) =>
+        key.startsWith('Auth:User')
+      );
+
+      if (!userKey) resolve();
+
+      const userObject = JSON.parse(localStorage.getItem(userKey));
+
+      if (validateUserObject(userObject)) {
+        commit('setUser', userObject);
 
         resolve();
-      });
+      }
+
+      resolve();
     });
   },
   async retrieveData({ dispatch }) {
@@ -73,7 +82,6 @@ export const actions = {
         };
       });
     }
-
     function practiceGenerator(id, length = 10) {
       const randomNumber = (min = 1, max = 20) =>
         Math.floor(Math.random() * (max - min) + min);
@@ -88,7 +96,6 @@ export const actions = {
         };
       });
     }
-
     await dispatch('entities/create', {
       entity: 'learns',
       data: [

@@ -56,7 +56,7 @@
 <script>
 import { validationMixin } from 'vuelidate';
 import { required, email } from 'vuelidate/lib/validators';
-import firebase from '~/utils/firebase';
+import firebaseAuth from '~/utils/firebaseAuth';
 
 export default {
   mixins: [validationMixin],
@@ -75,20 +75,21 @@ export default {
       required
     }
   },
+  middleware: 'authRoute',
   methods: {
-    async login() {
+    login() {
       this.loading = true;
 
-      try {
-        const { user } = await firebase
-          .auth()
-          .signInWithEmailAndPassword(this.email, this.password);
-
-        this.$router.push(user.emailVerfied ? '/dashboard' : '/auth/verify');
-      } catch (err) {
-        this.$toast.error('Invalid email/password');
-        this.loading = false;
-      }
+      firebaseAuth
+        .signIn(this.email, this.password)
+        .then(() => {
+          const { emailVerified } = this.$store.state.user;
+          this.$router.push(emailVerified ? '/dashboard' : '/auth/verify');
+        })
+        .catch(() => {
+          this.$toast.error('Invalid email/password');
+          this.loading = false;
+        });
     }
   }
 };

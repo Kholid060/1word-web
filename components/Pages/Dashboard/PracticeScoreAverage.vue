@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     scoreAverage() {
-      if (this.data.length === 0) return [0];
+      if (this.data.length === 0) return 0;
 
       const sum = this.data.reduce((curr, acc) => (curr += acc.score), 0);
 

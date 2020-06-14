@@ -8,7 +8,7 @@ import {
   mdiDelete,
   mdiPlus,
   mdiMinus,
-  mdiMessageProcessing,
+  mdiTranslate,
   mdiChevronDown,
   mdiClose,
   mdiCheck,
@@ -18,7 +18,9 @@ import {
   mdiEmail,
   mdiKey,
   mdiEye,
-  mdiEyeOff
+  mdiEyeOff,
+  mdiDotsHorizontal,
+  mdiLogout
 } from '@mdi/js';
 
 VueMdijs.add({
@@ -29,7 +31,7 @@ VueMdijs.add({
   mdiMinus,
   mdiPencilBoxMultiple,
   mdiDelete,
-  mdiMessageProcessing,
+  mdiTranslate,
   mdiChevronDown,
   mdiClose,
   mdiCheck,
@@ -39,7 +41,9 @@ VueMdijs.add({
   mdiEmail,
   mdiKey,
   mdiEye,
-  mdiEyeOff
+  mdiEyeOff,
+  mdiDotsHorizontal,
+  mdiLogout
 });
 
 Vue.use(VueMdijs);

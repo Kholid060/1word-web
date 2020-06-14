@@ -11,8 +11,8 @@
         {{ nav.name }}
       </nuxt-link>
     </div>
-    <button-ui icon>
-      <v-mdi name="mdi-account" class="text-light"></v-mdi>
+    <button-ui icon class="lg:hidden" @click="openProfile">
+      <v-mdi name="mdi-account"></v-mdi>
     </button-ui>
   </header>
 </template>
@@ -23,7 +23,15 @@ export default {
       { name: 'home', path: '/dashboard' },
       { name: 'read', path: '/dashboard/read' }
     ]
-  })
+  }),
+  methods: {
+    openProfile() {
+      this.$store.commit('updateState', {
+        key: 'openProfile',
+        data: true
+      });
+    }
+  }
 };
 </script>
 <style lang="scss">

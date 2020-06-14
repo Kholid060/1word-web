@@ -35,7 +35,7 @@ export default {
   components: { Header, Message, Question, PracticeComplete },
   middleware({ store, redirect, params }) {
     if (!store.state.practice.valid)
-      return redirect(`/dashboard/learn/${params.id}`);
+      return redirect(`/dashboard/language/${params.id}`);
   },
   async asyncData({ redirect, store, params }) {
     const { length } = store.state.practice;
@@ -44,7 +44,7 @@ export default {
       .$db()
       .model('words')
       .query()
-      .where('learnId', params.id)
+      .where('languageId', params.id)
       .get();
     const questions = await questionGenerator(words, length);
 
@@ -105,7 +105,7 @@ export default {
               wrong: this.questions.length - this.correctCount,
               score: (this.correctCount / this.questions.length) * 100,
               question_length: this.questions.length,
-              learnId: this.$route.params.id,
+              languageId: this.$route.params.id,
               timestamp: Date.now()
             }
           });
@@ -117,10 +117,13 @@ export default {
 
       if (userAnswer === this.currentQuestion.answer) this.correctCount += 1;
 
-      // const correct = new Audio(require('~/assets/audio/correct.wav').default);
-      // const wrong = new Audio(require('~/assets/audio/wrong.wav').default);
-
-      // userAnswer === this.currentQuestion.answer ? correct.play() : wrong.play();
+      userAnswer === this.currentQuestion.answer
+        ? this.playAudio('correct')
+        : this.playAudio('wrong');
+    },
+    playAudio(name) {
+      /* eslint-disable-next-line */
+      new Audio(require(`~/assets/audio/${name}.wav`));
     },
     nextQuestionKey({ key }) {
       if (key === 'Enter' && this.answered) {

@@ -1,5 +1,5 @@
 <template>
-  <card-ui>
+  <card-ui class="practice-history">
     <p slot="header">Practice History</p>
     <table class="table-auto table-ui">
       <thead>
@@ -21,14 +21,14 @@
             <td style="width: 100px">
               <flag-ui
                 size="40"
-                :code="item.learnId | getLang('country')"
+                :code="item.languageId | getLang('country')"
               ></flag-ui>
             </td>
             <td
               class="text-left"
               :title="formatDate(item.timestamp, 'DD MMMM YYYY')"
             >
-              <p>{{ item.learnId | getLang }}</p>
+              <p>{{ item.languageId | getLang }}</p>
               <p class="text-sm text-light">{{ formatDate(item.timestamp) }}</p>
             </td>
           </template>
@@ -110,3 +110,8 @@ export default {
   }
 };
 </script>
+<style>
+.practice-history .card-ui__content {
+  overflow: auto;
+}
+</style>

@@ -1,6 +1,6 @@
 <template>
   <header class="justify-between flex items-center">
-    <nuxt-link :to="`/dashboard/learn/${$route.params.id}`">
+    <nuxt-link :to="`/dashboard/language/${$route.params.id}`">
       <button-ui v-tooltip.right="'Go back'" icon>
         <v-mdi name="mdi-chevron-down" :rotate="90"></v-mdi>
       </button-ui>

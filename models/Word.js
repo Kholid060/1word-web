@@ -9,7 +9,7 @@ export default class Word extends Model {
       id: this.uid(() => shortid.generate()),
       title: this.string(''),
       meaning: this.attr(''),
-      learnId: this.attr(null),
+      languageId: this.attr(null),
       timestamp: this.attr(0)
     };
   }

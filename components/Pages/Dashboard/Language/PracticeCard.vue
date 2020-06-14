@@ -1,5 +1,5 @@
 <template>
-  <card-ui class="mt-6">
+  <card-ui class="sticky" style="top: 30px">
     <p slot="header">Practice</p>
     <p v-if="wordLength < 10" class="text-center">
       You need at least 10 words to start practice
@@ -10,9 +10,9 @@
           v-model="questionLength"
           min="10"
           type="number"
-          class="rounded-lg px-5 font-semibold w-9/12 mr-4 focus:outline-none text-center bg-input appearance-none text-2xl"
+          class="rounded-lg px-5 font-semibold w-10/12 mr-4 bg-input appearance-none text-2xl"
         />
-        <div class="w-3/12">
+        <div class="w-2/12">
           <button-ui
             icon
             :disabled="questionLength >= wordLength"
@@ -40,8 +40,9 @@
         class="mt-6"
         :disabled="isNotValid"
         @click="startPractice"
-        >Start practice</button-ui
       >
+        Start practice
+      </button-ui>
     </template>
   </card-ui>
 </template>
@@ -85,7 +86,7 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -94,5 +95,10 @@ input::-webkit-inner-spin-button {
 
 input[type='number'] {
   -moz-appearance: textfield;
+  text-align: center;
+  &:focus {
+    @apply bg-input-dark;
+    outline: none;
+  }
 }
 </style>
