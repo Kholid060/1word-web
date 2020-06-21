@@ -72,7 +72,8 @@ export default {
   methods: {
     fetchData() {
       return new Promise((resolve, reject) => {
-        if (this.data.length === 0) reject(new Error('Empty data'));
+        /* eslint-disable-next-line */
+        if (this.data.length === 0) reject();
 
         const objectData = this.data.reduce((data, { languageId }) => {
           const countryName = languageFilter(languageId);

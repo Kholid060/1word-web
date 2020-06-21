@@ -22,29 +22,40 @@
   </div>
 </template>
 <script>
-import firebase from '~/utils/firebase';
+import firebaseAuth from '~/utils/firebaseAuth';
 
 export default {
   data: () => ({
     loading: false
   }),
-  middleware: 'authRoute',
+  middleware({ store, redirect }) {
+    const { user } = store.state;
+
+    if (!user) {
+      redirect('/auth');
+    } else if (user && user.emailVerified) {
+      redirect('/dashboard');
+    }
+  },
   methods: {
     async useAnotherAccount() {
-      await firebase.auth().signOut();
+      await firebaseAuth.signOut();
 
       this.$router.replace('/auth');
     },
-    resendVerifyEmail() {
+    async resendVerifyEmail() {
       this.loading = true;
+      const { email } = this.$store.state.user;
 
-      firebase.auth().onAuthStateChanged(async (user) => {
-        await user.sendEmailVerification();
+      await firebaseAuth.sendOobCode('VERIFY_EMAIL', email);
 
-        this.$toast('Check your email inbox');
-        this.loading = false;
-      });
+      this.$toast('Check your email inbox');
     }
+  },
+  head() {
+    return {
+      title: 'Verify'
+    };
   }
 };
 </script>

@@ -4,7 +4,7 @@
     <form @submit.prevent="addWord" @keyup.enter="addWord">
       <div class="flex">
         <div
-          v-tooltip.right="'Translate word'"
+          v-tooltip.bottom="'Translate word'"
           icon
           class="mr-3 rounded-lg p-2 bg-input cursor-pointer"
           :disabled="!word"
@@ -28,7 +28,12 @@
           block
           class="mt-4 mb-8"
         ></textarea-ui>
-        <button-ui block :disabled="!(!!word && !!meaning)" type="primary">
+        <button-ui
+          block
+          :disabled="!(!!word && !!meaning)"
+          type="primary"
+          :loading="loading"
+        >
           Add word
         </button-ui>
       </div>
@@ -37,12 +42,15 @@
 </template>
 <script>
 import debounce from 'lodash.debounce';
+import shortid from 'shortid';
 import validateWord from '~/utils/validateWord';
+import firestore from '~/utils/firestore';
 
 export default {
   data: () => ({
     word: '',
-    meaning: ''
+    meaning: '',
+    loading: false
   }),
   methods: {
     inputWord: debounce(function(value) {
@@ -62,18 +70,33 @@ export default {
         })
         .exists();
 
+      this.loading = true;
+
       if (!isWordExist) {
-        WordModel.insert({
-          data: {
-            title: this.word,
-            meaning: this.meaning,
-            languageId: this.$route.params.id,
-            timestamp: Date.now()
-          }
-        }).then(() => {
-          this.word = this.meaning = '';
-        });
+        const word = {
+          id: shortid.generate(),
+          title: this.word,
+          meaning: this.meaning,
+          languageId: this.$route.params.id,
+          timestamp: Date.now()
+        };
+
+        firestore
+          .reference(`users/${this.$store.state.user.localId}/words`)
+          .set(word)
+          .then(async () => {
+            await WordModel.insert({
+              data: word
+            });
+
+            this.loading = false;
+            this.word = this.meaning = '';
+          })
+          .catch(() => {
+            this.loading = false;
+          });
       } else {
+        this.loading = false;
         this.$toast.error(`You already add ${this.word}`);
       }
     },

@@ -10,7 +10,8 @@ export default class Word extends Model {
       title: this.string(''),
       meaning: this.attr(''),
       languageId: this.attr(null),
-      timestamp: this.attr(0)
+      timestamp: this.attr(0),
+      dataPath: this.string('')
     };
   }
 

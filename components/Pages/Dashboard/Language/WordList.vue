@@ -2,8 +2,7 @@
   <div class="word-list">
     <card-ui>
       <template slot="header">
-        <p>Word List</p>
-        <div class="flex-grow"></div>
+        <p class="text-overflow flex-auto">Word List</p>
         <input-ui
           v-model="search"
           icon="mdi-magnify"
@@ -33,7 +32,7 @@
                   <v-mdi slot="prefix" name="mdi-pencil"></v-mdi>
                   Edit word
                 </list-ui>
-                <list-ui @click="deleteWord(word.id)">
+                <list-ui @click="deleteWord(word)">
                   <v-mdi
                     slot="prefix"
                     name="mdi-delete"
@@ -64,6 +63,7 @@
 </template>
 <script>
 import EditWordModal from './EditWordModal.vue';
+import firestore from '~/utils/firestore';
 
 export default {
   components: { EditWordModal },
@@ -89,11 +89,16 @@ export default {
     }
   },
   methods: {
-    deleteWord(wordId) {
-      this.$store
-        .$db()
-        .model('words')
-        .delete(wordId);
+    deleteWord({ id, dataPath }) {
+      firestore
+        .reference(dataPath)
+        .delete()
+        .then(() => {
+          this.$store
+            .$db()
+            .model('words')
+            .delete(id);
+        });
     }
   }
 };

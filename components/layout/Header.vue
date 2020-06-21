@@ -1,6 +1,8 @@
 <template>
   <header class="flex items-center py-6">
-    <img src="~/assets/images/icon.png" />
+    <nuxt-link to="/">
+      <img src="~/assets/images/icon.png" />
+    </nuxt-link>
     <div class="content ml-8 text-lighter flex-grow">
       <nuxt-link
         v-for="nav in navs"
@@ -12,7 +14,7 @@
       </nuxt-link>
     </div>
     <button-ui icon class="lg:hidden" @click="openProfile">
-      <v-mdi name="mdi-account"></v-mdi>
+      <v-mdi name="mdi-menu"></v-mdi>
     </button-ui>
   </header>
 </template>

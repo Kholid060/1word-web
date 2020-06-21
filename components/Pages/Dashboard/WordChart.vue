@@ -67,7 +67,8 @@ export default {
   methods: {
     fetchSeries(formatDate = 'MMMM DD') {
       return new Promise((resolve, reject) => {
-        if (this.words.length === 0) reject(new Error('Empty data'));
+        /* eslint-disable-next-line */
+        if (this.words.length === 0) reject();
 
         const objectData = this.words.reduce((data, word) => {
           const date = dayjs(word.timestamp).format(formatDate);

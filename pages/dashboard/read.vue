@@ -75,11 +75,21 @@ export default {
     activeCat: 'all',
     categories,
     swiperOptions: {
-      slidesPerView: 4.3,
-      mousewheel: true,
+      slidesPerView: 1,
       freeMode: true,
       grabCursor: true,
-      spaceBetween: 15
+      spaceBetween: 15,
+      breakpoints: {
+        480: {
+          slidesPerView: 2
+        },
+        640: {
+          slidesPerView: 3.2
+        },
+        1280: {
+          slidesPerView: 4.2
+        }
+      }
     }
   }),
   computed: {
@@ -107,6 +117,11 @@ export default {
         return website.category === this.activeCat;
       });
     }
+  },
+  head() {
+    return {
+      title: 'Read'
+    };
   }
 };
 </script>

@@ -22,6 +22,7 @@ import WordList from '~/components/Pages/Dashboard/Language/WordList.vue';
 import AddWord from '~/components/Pages/Dashboard/Language/AddWord.vue';
 import PracticeCard from '~/components/Pages/Dashboard/Language/PracticeCard.vue';
 import PracticeHistory from '~/components/ui/PracticeHistory.vue';
+import firestore from '~/utils/firestore';
 
 export default {
   components: { WordList, AddWord, PracticeCard, PracticeHistory },
@@ -62,23 +63,21 @@ export default {
   },
   methods: {
     deletePractice(practice) {
-      this.$store
-        .$db()
-        .model('practices')
-        .delete(practice.$id);
-    },
-    deleteLanguage() {
-      this.languageModel()
-        .delete(this.language.$id)
+      firestore
+        .reference(practice.dataPath)
+        .delete()
         .then(() => {
-          if (this.languageModel.all().length === 0)
-            this.$router.push({
-              path: '/welcome',
-              query: { id: 'add-language' }
-            });
-          else this.$router.push('/');
+          this.$store
+            .$db()
+            .model('practices')
+            .delete(practice.$id);
         });
     }
+  },
+  head() {
+    return {
+      title: this.$options.filters.getLang(this.languageId)
+    };
   }
 };
 </script>

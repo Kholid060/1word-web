@@ -36,6 +36,11 @@ export default {
         .model('practices')
         .all();
     }
+  },
+  head() {
+    return {
+      title: 'Dashboard'
+    };
   }
 };
 </script>

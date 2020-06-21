@@ -29,7 +29,7 @@
         </div>
       </main>
     </div>
-    <Aside class="hidden lg:block"></Aside>
+    <Aside></Aside>
     <modal-ui></modal-ui>
   </div>
 </template>
@@ -49,15 +49,21 @@ export default {
   },
   data: () => ({
     retrieved: false
-  })
-  // middleware({ store }) {
-  //   const { user } = store.state;
-  //   if (!user) {
-  //     redirect('/auth');
-  //   } else if (user && !user.emailVerified) {
-  //     redirect('/auth/verify');
-  //   }
-  // }
+  }),
+  head() {
+    return {
+      titleTemplate: '%s - 1Word'
+    };
+  },
+  middleware({ store, redirect }) {
+    const { user } = store.state;
+
+    if (!user) {
+      redirect('/auth');
+    } else if (user && !user.emailVerified) {
+      redirect('/auth/verify');
+    }
+  }
 };
 </script>
 <style scoped lang="scss">

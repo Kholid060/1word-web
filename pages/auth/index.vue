@@ -66,6 +66,33 @@ export default {
     email: '',
     password: ''
   }),
+  methods: {
+    login() {
+      this.loading = true;
+
+      firebaseAuth
+        .signIn(this.email, this.password)
+        .then(async () => {
+          const { emailVerified } = await this.$store.dispatch('fetchUser');
+
+          this.$router.push(emailVerified ? '/dashboard' : '/auth/verify');
+        })
+        .catch(({ message }) => {
+          this.$toast.error(
+            message === 'EMAIL_NOT_FOUND'
+              ? 'User not found'
+              : 'Incorrect email or password'
+          );
+
+          this.loading = false;
+        });
+    }
+  },
+  head() {
+    return {
+      title: 'Login'
+    };
+  },
   validations: {
     email: {
       required,
@@ -75,22 +102,6 @@ export default {
       required
     }
   },
-  middleware: 'authRoute',
-  methods: {
-    login() {
-      this.loading = true;
-
-      firebaseAuth
-        .signIn(this.email, this.password)
-        .then(() => {
-          const { emailVerified } = this.$store.state.user;
-          this.$router.push(emailVerified ? '/dashboard' : '/auth/verify');
-        })
-        .catch(() => {
-          this.$toast.error('Invalid email/password');
-          this.loading = false;
-        });
-    }
-  }
+  middleware: 'authRoute'
 };
 </script>

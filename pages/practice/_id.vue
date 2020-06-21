@@ -25,11 +25,13 @@
   </div>
 </template>
 <script>
+import shortid from 'shortid';
 import Header from '~/components/Pages/Practice/Header.vue';
 import Message from '~/components/Pages/Practice/Message.vue';
 import Question from '~/components/Pages/Practice/Question.vue';
 import PracticeComplete from '~/components/Pages/Practice/PracticeComplete.vue';
 import questionGenerator from '~/utils/questionGenerator';
+import firestore from '~/utils/firestore';
 
 export default {
   components: { Header, Message, Question, PracticeComplete },
@@ -59,22 +61,6 @@ export default {
     userAnswer: '',
     answered: false
   }),
-  beforeRouteLeave(to, from, next) {
-    if (this.qNumber === this.questions.length) return next();
-
-    const confirm = window.confirm('Do you really want to leave?');
-    if (confirm) {
-      this.$store.commit('updateState', {
-        key: 'practice',
-        data: {
-          length: 0,
-          valid: false
-        }
-      });
-
-      next();
-    }
-  },
   computed: {
     isPracticeDone() {
       return this.qNumber === this.questions.length;
@@ -96,18 +82,26 @@ export default {
       this.qNumber += 1;
 
       if (this.isPracticeDone) {
-        this.$store
-          .$db()
-          .model('practices')
-          .insert({
-            data: {
-              correct: this.correctCount,
-              wrong: this.questions.length - this.correctCount,
-              score: (this.correctCount / this.questions.length) * 100,
-              question_length: this.questions.length,
-              languageId: this.$route.params.id,
-              timestamp: Date.now()
-            }
+        const practice = {
+          id: shortid.generate(),
+          correct: this.correctCount,
+          wrong: this.questions.length - this.correctCount,
+          score: (this.correctCount / this.questions.length) * 100,
+          question_length: this.questions.length,
+          languageId: this.$route.params.id,
+          timestamp: Date.now()
+        };
+
+        firestore
+          .reference(`users/${this.$store.state.user.localId}/practices`)
+          .set(practice)
+          .then(() => {
+            this.$store
+              .$db()
+              .model('practices')
+              .insert({
+                data: practice
+              });
           });
       }
     },
@@ -129,6 +123,27 @@ export default {
       if (key === 'Enter' && this.answered) {
         this.nextQuestion();
       }
+    }
+  },
+  head() {
+    return {
+      title: 'Practice'
+    };
+  },
+  beforeRouteLeave(to, from, next) {
+    if (this.qNumber === this.questions.length) return next();
+
+    const confirm = window.confirm('Do you really want to leave?');
+    if (confirm) {
+      this.$store.commit('updateState', {
+        key: 'practice',
+        data: {
+          length: 0,
+          valid: false
+        }
+      });
+
+      next();
     }
   }
 };

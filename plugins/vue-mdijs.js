@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueMdijs from 'vue-mdijs';
 import {
   mdiMagnify,
+  mdiMessageProcessing,
   mdiPencil,
   mdiCog,
   mdiPencilBoxMultiple,
@@ -14,17 +15,22 @@ import {
   mdiCheck,
   mdiLinkLock,
   mdiLink,
-  mdiAccount,
+  mdiMenu,
   mdiEmail,
+  mdiArrowRight,
   mdiKey,
   mdiEye,
   mdiEyeOff,
+  mdiAccount,
   mdiDotsHorizontal,
-  mdiLogout
+  mdiLogout,
+  mdiChartAreasplineVariant,
+  mdiHistory
 } from '@mdi/js';
 
 VueMdijs.add({
   mdiMagnify,
+  mdiMessageProcessing,
   mdiPencil,
   mdiCog,
   mdiPlus,
@@ -37,13 +43,17 @@ VueMdijs.add({
   mdiCheck,
   mdiLinkLock,
   mdiLink,
-  mdiAccount,
+  mdiMenu,
   mdiEmail,
+  mdiArrowRight,
   mdiKey,
   mdiEye,
   mdiEyeOff,
+  mdiAccount,
   mdiDotsHorizontal,
-  mdiLogout
+  mdiLogout,
+  mdiChartAreasplineVariant,
+  mdiHistory
 });
 
 Vue.use(VueMdijs);

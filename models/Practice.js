@@ -12,7 +12,8 @@ export default class Practice extends Model {
       score: this.number(0),
       question_length: this.number(0),
       languageId: this.attr(null),
-      timestamp: this.number(0)
+      timestamp: this.number(0),
+      dataPath: this.string('')
     };
   }
 

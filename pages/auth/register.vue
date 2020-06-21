@@ -63,7 +63,7 @@
 <script>
 import { validationMixin } from 'vuelidate';
 import { required, email, minLength } from 'vuelidate/lib/validators';
-import firebase from '~/utils/firebase';
+import firebaseAuth from '~/utils/firebaseAuth';
 
 export default {
   mixins: [validationMixin],
@@ -75,6 +75,30 @@ export default {
     password: ''
   }),
   middleware: 'authRoute',
+  methods: {
+    async createNewAccount() {
+      this.loading = true;
+
+      try {
+        await firebaseAuth.signUp(this.email, this.password);
+        await firebaseAuth.updateProfile({
+          displayName: this.name
+        });
+        const { email } = await this.$store.dispatch('fetchUser');
+        await firebaseAuth.sendOobCode('VERIFY_EMAIL', email);
+
+        this.$router.push('/auth/verify');
+      } catch (err) {
+        this.loading = false;
+        this.$toast.error('This email is already used');
+      }
+    }
+  },
+  head() {
+    return {
+      title: 'Register'
+    };
+  },
   validations: {
     name: {
       required,
@@ -87,29 +111,6 @@ export default {
     password: {
       required,
       minLength: minLength(6)
-    }
-  },
-  methods: {
-    async createNewAccount() {
-      this.loading = true;
-
-      try {
-        const { user } = await firebase
-          .auth()
-          .createUserWithEmailAndPassword(this.email, this.password);
-
-        await user.updateProfile({
-          displayName: this.name
-        });
-        await user.sendEmailVerification();
-
-        setTimeout(() => {
-          this.$router.push('/auth/verify');
-        }, 2000);
-      } catch (err) {
-        this.loading = false;
-        this.$toast.error('This email is already used');
-      }
     }
   }
 };

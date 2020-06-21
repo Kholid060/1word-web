@@ -39,14 +39,19 @@ export default {
   components: { FlagCard, AddLanguageModal },
   data: () => ({
     swiperOptions: {
-      slidesPerView: 2,
+      slidesPerView: 1,
       grabCursor: true,
-      spaceBetween: 60,
+      spaceBetween: 30,
       freeMode: true,
       breakpoints: {
+        480: {
+          slidesPerView: 2
+        },
         640: {
-          slidesPerView: 4.2,
-          spaceBetween: 30
+          slidesPerView: 3
+        },
+        1280: {
+          slidesPerView: 4.2
         }
       }
     }

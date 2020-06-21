@@ -28,6 +28,8 @@
   </modal>
 </template>
 <script>
+import firestore from '~/utils/firestore';
+
 export default {
   data: () => ({
     data: {
@@ -40,16 +42,22 @@ export default {
       this.data = params;
     },
     updateWord() {
-      this.$store
-        .$db()
-        .model('words')
+      firestore
+        .reference(this.data.dataPath)
         .update({
-          where: this.data.id,
-          data: {
-            meaning: this.data.meaning
-          }
+          meaning: this.data.meaning
         })
-        .then(() => {
+        .then(async () => {
+          await this.$store
+            .$db()
+            .model('words')
+            .update({
+              where: this.data.id,
+              data: {
+                meaning: this.data.meaning
+              }
+            });
+
           this.clearAll();
         });
     },

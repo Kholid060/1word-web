@@ -2,10 +2,8 @@
   <div class="auth flex min-h-screen">
     <div class="max-w-xl w-full p-10 lg:px-16 lg:py-10">
       <div class="mb-12">
-        <nuxt-link to="/">
-          <img src="~/assets/images/icon.png" class="inline-block" />
-          <span class="text-xl font-semibold ml-3">1Word</span>
-        </nuxt-link>
+        <img src="~/assets/images/icon.png" class="inline-block" />
+        <span class="text-xl font-semibold ml-3">1Word</span>
       </div>
       <transition name="slide-left" mode="out-in">
         <nuxt-child />
@@ -19,12 +17,21 @@
           width="450px"
         />
         <p class="text-center text-lg mt-6" style="color: #9bc2fd">
-          Add word while browsing the web
+          You can add a word by double click at it
         </p>
       </div>
     </div>
   </div>
 </template>
+<script>
+export default {
+  head() {
+    return {
+      titleTemplate: '%s - 1Word'
+    };
+  }
+};
+</script>
 <style scoped>
 .slide-left-enter-active,
 .slide-left-leave-active {

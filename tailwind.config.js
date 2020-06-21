@@ -28,6 +28,19 @@ const backgroundColor = getColorsVar(
 const textColor = getColorsVar('text-', 'default', 'light', 'lighter');
 
 module.exports = {
+  purge: {
+    enabled: process.env.NODE_ENV === 'production',
+    content: [
+      './components/**/*.vue',
+      './layouts/**/*.vue',
+      './pages/**/*.vue',
+      './plugins/**/*.js',
+      './nuxt.config.js'
+    ],
+    options: {
+      whitelist: ['light-theme']
+    }
+  },
   theme: {
     borderRadius: {
       sm: '0.125rem',

@@ -38,6 +38,7 @@
 </template>
 <script>
 import { supportedLanguages, languageFilter } from '~/utils/getLang';
+import firestore from '~/utils/firestore';
 
 export default {
   data: () => ({
@@ -65,16 +66,24 @@ export default {
       });
     },
     addLanguage(languageId) {
-      this.$store
-        .$db()
-        .model('languages')
-        .insert({
-          data: {
-            languageId
-          }
+      const languageModel = this.$store.$db().model('languages');
+      const languages = languageModel.all().map(({ languageId }) => languageId);
+
+      firestore
+        .reference(`users/${this.$store.state.user.localId}`)
+        .set({
+          languages: [...languages, languageId]
         })
         .then(() => {
+          languageModel.insert({
+            data: {
+              languageId
+            }
+          });
           this.$modal.hide('add-language');
+        })
+        .catch(() => {
+          this.$toast.error('Oppss... Something went wrong');
         });
     }
   }

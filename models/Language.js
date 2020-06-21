@@ -1,14 +1,14 @@
 import { Model } from '@vuex-orm/core';
-import shortId from 'shortid';
 import Word from './Word';
 import Practice from './Practice';
 
 export default class Learn extends Model {
   static entity = 'languages';
 
+  static primaryKey = 'languageId';
+
   static fields() {
     return {
-      id: this.uid(() => shortId.generate()),
       languageId: this.string(''),
       words: this.hasMany(Word, 'languageId', 'languageId'),
       practices: this.hasMany(Practice, 'languageId', 'languageId')
