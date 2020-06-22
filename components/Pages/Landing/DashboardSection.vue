@@ -20,7 +20,7 @@
       </div>
       <img
         class="shadow-xl rounded-lg border-8 lg:w-7/12"
-        src="~/assets/images/home.png"
+        src="~/assets/images/dashboard.png"
       />
     </div>
   </section>

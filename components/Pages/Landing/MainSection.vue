@@ -2,7 +2,7 @@
   <section class="overflow-hidden relative">
     <img
       class="shadow-xl rounded-lg hidden border-8 main-img lg:block absolute"
-      src="~/assets/images/home.png"
+      src="~/assets/images/example.png"
     />
     <div class="container py-8 lg:h-screen">
       <div class="mb-16">
