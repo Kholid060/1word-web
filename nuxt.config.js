@@ -26,7 +26,7 @@ export default {
   /*
    ** Global CSS
    */
-  css: ['~/assets/scss/base/theme.scss', '~/assets/scss/style.scss'],
+  css: [],
   /*
    ** Plugins to load before mounting the App
    */
@@ -48,6 +48,9 @@ export default {
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss'
   ],
+  tailwindcss: {
+    cssPath: '~/assets/scss/base/tailwind.scss'
+  },
   /*
    ** Nuxt.js modules
    */
@@ -55,8 +58,11 @@ export default {
     '@nuxtjs/pwa',
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
-    'vue-toastification/nuxt'
+    '@nuxtjs/toast'
   ],
+  toast: {
+    duration: 3000
+  },
   generate: {
     fallback: true
   },

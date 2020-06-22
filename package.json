@@ -23,6 +23,7 @@
     "@mdi/js": "^5.3.45",
     "@nuxtjs/dotenv": "^1.4.0",
     "@nuxtjs/pwa": "^3.0.0-0",
+    "@nuxtjs/toast": "^3.3.0",
     "@vuex-orm/core": "^0.36.3",
     "core-js": "2.6.10",
     "dayjs": "^1.8.28",

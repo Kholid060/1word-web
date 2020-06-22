@@ -34,11 +34,29 @@ module.exports = {
       './components/**/*.vue',
       './layouts/**/*.vue',
       './pages/**/*.vue',
-      './plugins/**/*.js',
-      './nuxt.config.js'
+      './plugins/**/*.js'
     ],
     options: {
-      whitelist: ['light-theme']
+      whitelist: [
+        'light-theme',
+        'table-ui',
+        'tooltip-ui',
+        'vue-popover-theme',
+        'swiper-wrapper',
+        'toasted'
+      ],
+      whitelistPatterns: [
+        /swiper/,
+        /light-theme/,
+        /vue-popover-theme/,
+        /mdi-icon/,
+        /toasted/,
+        /vue-popover-theme/,
+        /chart-container/,
+        /graph-svg-tip/,
+        /-(leave|enter|appear)(|-(to|from|active))$/
+      ],
+      whitelistPatternsChildren: [/wrapper/, /swiper-wrapper/]
     }
   },
   theme: {

@@ -75,11 +75,12 @@ export default {
   }
   .add-language {
     @apply leading-tight rounded-lg bg-default;
-    display: flex;
+    display: inline-flex;
     width: 170px;
+    vertical-align: top;
     margin-right: 30px !important;
     border: 1px solid transparent;
-    align-items: center;
+    align-items: top;
     cursor: pointer;
     transition: border 200ms ease;
     &:hover {

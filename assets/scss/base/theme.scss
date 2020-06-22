@@ -8,10 +8,10 @@
 
 :root {
   @include extractColors($baseColors);
+  @include extractColors($lightTheme);
 }
 
 .light-theme {
-  @include extractColors($lightTheme);
 }
 
 .dark-theme {

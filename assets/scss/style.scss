@@ -11,9 +11,19 @@ body {
   border-color: var(--border);
 }
 
+.toasted {
+  padding: 20px !important;
+  font-weight: 500 !important;
+}
+
 .vue-popover-theme {
   z-index: 99;
 }
+
+.swiper-slide {
+  display: inline-block;
+}
+
 .mdi-icon{
   transition: transform .2s ease;
 }
@@ -37,9 +47,6 @@ body {
   div, .popover-inner{
     outline: none;
   }
-}
-.CodeMirror-overlayscroll-vertical div{
-  background-color: #12151b !important;
 }
 
 .scroll::-webkit-scrollbar {

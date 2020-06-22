@@ -51,7 +51,7 @@ export default {
       firebaseAuth
         .sendOobCode('PASSWORD_RESET', this.$store.state.user.email)
         .then((data) => {
-          this.$toast('Check your email inbox');
+          this.$toast.show('Check your email inbox');
           this.loadingResetPassword = false;
         })
         .catch((err) => {

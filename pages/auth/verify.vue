@@ -49,7 +49,7 @@ export default {
 
       await firebaseAuth.sendOobCode('VERIFY_EMAIL', email);
 
-      this.$toast('Check your email inbox');
+      this.$toast.show('Check your email inbox');
     }
   },
   head() {

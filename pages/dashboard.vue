@@ -36,11 +36,11 @@
 <script>
 import DashboardHeader from '~/components/layout/Header.vue';
 import Aside from '~/components/layout/Aside.vue';
-import languageList from '~/components/Pages/Dashboard/languageList.vue';
+import LanguageList from '~/components/Pages/Dashboard/LanguageList.vue';
 import ExpandTransition from '~/components/Transitions/ExpandTransition.vue';
 
 export default {
-  components: { Aside, DashboardHeader, languageList, ExpandTransition },
+  components: { Aside, DashboardHeader, LanguageList, ExpandTransition },
   async fetch({ store }) {
     if (!this.retrieved) {
       this.retrieved = true;
