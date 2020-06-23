@@ -75,7 +75,7 @@ export default {
         .then(async () => {
           const { emailVerified } = await this.$store.dispatch('fetchUser');
 
-          this.$router.push(emailVerified ? '/dashboard' : '/auth/verify');
+          this.$router.push(emailVerified ? '/redirect' : '/auth/verify');
         })
         .catch(({ message }) => {
           this.$toast.error(
