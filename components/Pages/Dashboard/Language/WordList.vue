@@ -1,6 +1,11 @@
 <template>
   <div class="word-list">
-    <card-ui>
+    <failed-load-data
+      v-if="error"
+      :loading="loading"
+      @fetch="$fetch"
+    ></failed-load-data>
+    <card-ui v-else>
       <template slot="header">
         <p class="text-overflow flex-auto">Word List</p>
         <input-ui
@@ -11,8 +16,11 @@
           placeholder="Search word"
         ></input-ui>
       </template>
+      <div v-if="loading" class="text-center my-6">
+        <circular-progress-ui spinner></circular-progress-ui>
+      </div>
       <empty-state-ui
-        v-if="words.length === 0"
+        v-else-if="words.length === 0"
         icon="mdi-message-processing"
         title="No Data"
         description="Add your first word."
@@ -63,19 +71,62 @@
 </template>
 <script>
 import EditWordModal from './EditWordModal.vue';
-import firestore from '~/utils/firestore';
+import FailedLoadData from '~/components/ui/FailedLoadData.vue';
+import Word from '~/models/Word';
+import Language from '~/models/Language';
+import { database } from '~/utils/firebase';
+import { normalizeData, isObject } from '~/utils/helper';
 
 export default {
-  components: { EditWordModal },
-  props: {
-    words: Array
+  components: { EditWordModal, FailedLoadData },
+  fetch() {
+    const { localId } = this.$store.state.user;
+    const { id } = this.$route.params;
+    const { retrieveWords } = Language.find(id);
+
+    if (retrieveWords || this.words.length > 0) return;
+
+    this.loading = true;
+
+    database
+      .ref(`users/${localId}/words/${id}`)
+      .get()
+      .then((words) => {
+        this.loading = this.error = false;
+        this.$emit('update:error', false);
+
+        if (!isObject(words)) return;
+
+        Word.insert({
+          data: normalizeData(words, id)
+        });
+
+        Language.insertOrUpdate({
+          data: {
+            langId: id,
+            retrieveWords: true
+          }
+        });
+      })
+      .catch(() => {
+        this.loading = false;
+        this.$emit('update:error', true);
+        this.error = true;
+      });
   },
   data: () => ({
     search: '',
     currentPage: 0,
-    perPage: 10
+    perPage: 10,
+    error: false,
+    loading: false
   }),
   computed: {
+    words() {
+      return Word.query()
+        .where('langId', this.$route.params.id)
+        .all();
+    },
     filteredWords() {
       return this.words.filter(({ title }) => {
         return title.toLowerCase().match(this.search.toLowerCase());
@@ -88,11 +139,18 @@ export default {
       return this.filteredWords.slice(start, end);
     }
   },
+  activated() {
+    alert('test');
+    this.$emit('update:error', false);
+    this.$fetch();
+  },
   methods: {
-    deleteWord({ id, dataPath }) {
-      firestore
-        .reference(dataPath)
-        .delete()
+    deleteWord({ id, langId }) {
+      const { localId } = this.$store.state.user;
+
+      database
+        .ref(`users/${localId}/words/${langId}/${id}`)
+        .remove()
         .then(() => {
           this.$store
             .$db()

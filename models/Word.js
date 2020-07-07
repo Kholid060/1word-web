@@ -9,9 +9,8 @@ export default class Word extends Model {
       id: this.uid(() => shortid.generate()),
       title: this.string(''),
       meaning: this.attr(''),
-      languageId: this.attr(null),
-      timestamp: this.attr(0),
-      dataPath: this.string('')
+      langId: this.attr(null),
+      timestamp: this.attr(0)
     };
   }
 

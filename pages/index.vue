@@ -21,6 +21,11 @@ export default {
     LanguagesSection,
     DashboardSection,
     PracticeSection
+  },
+  middleware({ store, redirect }) {
+    if (store.state.user) {
+      redirect('/dashboard');
+    }
   }
 };
 </script>

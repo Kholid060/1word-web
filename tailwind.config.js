@@ -29,8 +29,7 @@ const textColor = getColorsVar('text-', 'default', 'light', 'lighter');
 
 module.exports = {
   purge: {
-    // process.env.NODE_ENV === 'production'
-    enabled: false,
+    enabled: process.env.NODE_ENV === 'production',
     content: [
       './components/**/*.vue',
       './layouts/**/*.vue',
@@ -44,10 +43,12 @@ module.exports = {
         'tooltip-ui',
         'vue-popover-theme',
         'swiper-wrapper',
-        'toasted'
+        'toasted',
+        'dark-theme'
       ],
       whitelistPatterns: [
         /swiper/,
+        /dark-theme/,
         /light-theme/,
         /vue-popover-theme/,
         /mdi-icon/,

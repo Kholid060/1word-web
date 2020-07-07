@@ -63,7 +63,7 @@
 <script>
 import { validationMixin } from 'vuelidate';
 import { required, email, minLength } from 'vuelidate/lib/validators';
-import firebaseAuth from '~/utils/firebaseAuth';
+import { auth } from '~/utils/firebase';
 
 export default {
   mixins: [validationMixin],
@@ -78,15 +78,13 @@ export default {
   methods: {
     async createNewAccount() {
       this.loading = true;
-
       try {
-        await firebaseAuth.signUp(this.email, this.password);
-        await firebaseAuth.updateProfile({
+        await auth.signUp(this.email, this.password);
+        await auth.updateProfile({
           displayName: this.name
         });
         const { email } = await this.$store.dispatch('fetchUser');
-        await firebaseAuth.sendOobCode('VERIFY_EMAIL', email);
-
+        await auth.sendOobCode('VERIFY_EMAIL', email);
         this.$router.push('/auth/verify');
       } catch (err) {
         this.loading = false;

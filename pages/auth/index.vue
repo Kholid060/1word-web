@@ -56,7 +56,7 @@
 <script>
 import { validationMixin } from 'vuelidate';
 import { required, email } from 'vuelidate/lib/validators';
-import firebaseAuth from '~/utils/firebaseAuth';
+import { auth } from '~/utils/firebase';
 
 export default {
   mixins: [validationMixin],
@@ -69,13 +69,11 @@ export default {
   methods: {
     login() {
       this.loading = true;
-
-      firebaseAuth
+      auth
         .signIn(this.email, this.password)
         .then(async () => {
           const { emailVerified } = await this.$store.dispatch('fetchUser');
-
-          this.$router.push(emailVerified ? '/redirect' : '/auth/verify');
+          this.$router.push(emailVerified ? '/dashboard' : '/auth/verify');
         })
         .catch(({ message }) => {
           this.$toast.error(
@@ -83,7 +81,6 @@ export default {
               ? 'User not found'
               : 'Incorrect email or password'
           );
-
           this.loading = false;
         });
     }

@@ -31,7 +31,7 @@ import Message from '~/components/Pages/Practice/Message.vue';
 import Question from '~/components/Pages/Practice/Question.vue';
 import PracticeComplete from '~/components/Pages/Practice/PracticeComplete.vue';
 import questionGenerator from '~/utils/questionGenerator';
-import firestore from '~/utils/firestore';
+import { database } from '~/utils/firebase';
 
 export default {
   components: { Header, Message, Question, PracticeComplete },
@@ -39,14 +39,13 @@ export default {
     if (!store.state.practice.valid)
       return redirect(`/dashboard/language/${params.id}`);
   },
-  async asyncData({ redirect, store, params }) {
+  async asyncData({ store, params }) {
     const { length } = store.state.practice;
-
     const words = store
       .$db()
       .model('words')
       .query()
-      .where('languageId', params.id)
+      .where('langId', params.id)
       .get();
     const questions = await questionGenerator(words, length);
 
@@ -81,43 +80,55 @@ export default {
       this.answered = false;
       this.qNumber += 1;
 
-      if (this.isPracticeDone) {
-        const practice = {
-          id: shortid.generate(),
-          correct: this.correctCount,
-          wrong: this.questions.length - this.correctCount,
-          score: (this.correctCount / this.questions.length) * 100,
-          question_length: this.questions.length,
-          languageId: this.$route.params.id,
-          timestamp: Date.now()
-        };
+      if (this.isPracticeDone) this.submitPractice();
+    },
+    submitPractice() {
+      const practiceId = shortid.generate();
+      const langId = this.$route.params.id;
+      const { localId } = this.$store.state.user;
 
-        firestore
-          .reference(`users/${this.$store.state.user.localId}/practices`)
-          .set(practice)
-          .then(() => {
-            this.$store
-              .$db()
-              .model('practices')
-              .insert({
-                data: practice
-              });
+      const practice = {
+        correct: this.correctCount,
+        wrong: this.questions.length - this.correctCount,
+        score: (this.correctCount / this.questions.length) * 100,
+        qLength: this.questions.length,
+        timestamp: Date.now()
+      };
+
+      database
+        .ref(`users/${localId}/practices/${langId}/${practiceId}`)
+        .set(practice)
+        .then(async () => {
+          const { chart } = this.$store.state;
+          const updatedScores = [...chart.sa, practice.score];
+
+          await database.ref(`users/${localId}/charts`).update({
+            sa: updatedScores
           });
-      }
+          await this.$store
+            .$db()
+            .model('practices')
+            .insert({
+              data: {
+                ...practice,
+                langId,
+                id: practiceId
+              }
+            });
+          this.$store.commit('updateState', {
+            key: 'chart',
+            data: {
+              ...chart,
+              sa: updatedScores
+            }
+          });
+        });
     },
     answerQuestion(userAnswer) {
       this.answered = true;
       this.userAnswer = userAnswer;
 
       if (userAnswer === this.currentQuestion.answer) this.correctCount += 1;
-
-      userAnswer === this.currentQuestion.answer
-        ? this.playAudio('correct')
-        : this.playAudio('wrong');
-    },
-    playAudio(name) {
-      /* eslint-disable-next-line */
-      new Audio(require(`~/assets/audio/${name}.wav`));
     },
     nextQuestionKey({ key }) {
       if (key === 'Enter' && this.answered) {

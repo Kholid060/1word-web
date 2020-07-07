@@ -36,8 +36,7 @@ export default {
     './plugins/filters',
     './plugins/nuxt-client-init.js',
     './plugins/v-tooltip',
-    './plugins/vue-js-modal',
-    './plugins/vue-awesome-swiper'
+    './plugins/vue-js-modal'
   ],
   /*
    ** Nuxt.js dev-modules

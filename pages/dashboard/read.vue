@@ -36,8 +36,8 @@
           </p>
         </div>
       </div>
-      <swiper :options="swiperOptions" class="pr-6">
-        <swiper-slide
+      <glider-carousel class="pr-6">
+        <div
           v-for="website in filterByCategory(item.sources)"
           :key="website.url"
           class="pt-1 pb-4"
@@ -62,35 +62,20 @@
               </p>
             </card-ui>
           </a>
-        </swiper-slide>
-      </swiper>
+        </div>
+      </glider-carousel>
     </div>
   </div>
 </template>
 <script>
 import { categories, sources } from '~/utils/readSources';
+import GliderCarousel from '~/components/ui/GliderCarousel.vue';
 
 export default {
+  components: { GliderCarousel },
   data: () => ({
     activeCat: 'all',
-    categories,
-    swiperOptions: {
-      slidesPerView: 1,
-      freeMode: true,
-      grabCursor: true,
-      spaceBetween: 15,
-      breakpoints: {
-        480: {
-          slidesPerView: 2
-        },
-        640: {
-          slidesPerView: 3.2
-        },
-        1280: {
-          slidesPerView: 4.2
-        }
-      }
-    }
+    categories
   }),
   computed: {
     sources() {
@@ -98,7 +83,7 @@ export default {
         .$db()
         .model('languages')
         .all()
-        .map((language) => language.languageId);
+        .map((language) => language.langId);
 
       return sources.filter((source) => {
         return (

@@ -1,86 +1,89 @@
 <template>
   <div class="mb-3 language-list">
-    <swiper :options="swiperOptions">
-      <swiper-slide
-        class="add-language py-6 px-5"
-        @click.native="$modal.show('add-language')"
-      >
-        <button-ui icon class="shadow-xl">
-          <v-mdi name="mdi-plus" class="text-primary"></v-mdi>
-        </button-ui>
-        <span class="ml-4">
-          Add language
-        </span>
-      </swiper-slide>
-      <template v-if="languages.length !== 0">
-        <swiper-slide
-          v-for="language in languages"
-          :key="language.languageId"
-          :title="language.languageId | getLang"
+    <glider-carousel ref="glider">
+      <div class="pr-6 mb-6 mt-3">
+        <div
+          class="add-language py-6 px-5 rounded-lg bg-default"
+          :class="{ pulse: languages.length === 0 }"
+          @click="$modal.show('add-language')"
         >
-          <router-link :to="`/dashboard/language/${language.languageId}`">
+          <button-ui icon class="shadow-xl">
+            <v-mdi name="mdi-plus" class="text-primary"></v-mdi>
+          </button-ui>
+          <span class="ml-4">
+            Add language
+          </span>
+        </div>
+      </div>
+      <template v-if="languages.length !== 0">
+        <div
+          v-for="language in languages"
+          :key="language.langId"
+          :title="language.langId | getLang"
+          class="pr-6 mb-6 mt-3"
+        >
+          <router-link :to="`/dashboard/language/${language.langId}`">
             <flag-card
-              :id="language.languageId"
-              :word-length="language.words.length"
-              :active="$route.params.id === language.languageId"
+              :id="language.langId"
+              :active="$route.params.id === language.langId"
             ></flag-card>
           </router-link>
-        </swiper-slide>
+        </div>
       </template>
-    </swiper>
+    </glider-carousel>
     <add-language-modal></add-language-modal>
   </div>
 </template>
 <script>
 import FlagCard from '~/components/ui/FlagCard.vue';
 import AddLanguageModal from '~/components/ui/addLanguageModal.vue';
+import GliderCarousel from '~/components/ui/GliderCarousel.vue';
 
 export default {
-  components: { FlagCard, AddLanguageModal },
-  data: () => ({
-    swiperOptions: {
-      slidesPerView: 1,
-      grabCursor: true,
-      spaceBetween: 30,
-      freeMode: true,
-      breakpoints: {
-        480: {
-          slidesPerView: 2
-        },
-        640: {
-          slidesPerView: 3
-        },
-        1280: {
-          slidesPerView: 4.2
-        }
-      }
-    }
-  }),
+  components: { FlagCard, AddLanguageModal, GliderCarousel },
   computed: {
     languages() {
       return this.$store
         .$db()
         .model('languages')
-        .query()
-        .with('words')
-        .get();
+        .all();
     }
+  },
+  mounted() {
+    this.$watch(
+      () => this.languages,
+      () => this.$refs.glider.carousel.refresh(true),
+      { deep: true }
+    );
   }
 };
 </script>
 <style lang="scss" scoped>
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 82, 204, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(0, 82, 204, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 82, 204, 0);
+  }
+}
+
+.pulse {
+  animation: pulse 1.5s infinite;
+}
+
 .language-list {
-  .swiper-container {
-    @apply pb-6 pt-3 pr-6;
+  .slick-list {
+    padding: 10px !important;
   }
   .add-language {
-    @apply leading-tight rounded-lg bg-default;
-    display: inline-flex;
-    width: 170px;
-    vertical-align: top;
-    margin-right: 30px !important;
+    display: flex;
+    align-items: center;
+    width: 100%;
     border: 1px solid transparent;
-    align-items: top;
     cursor: pointer;
     transition: border 200ms ease;
     &:hover {

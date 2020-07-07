@@ -1,7 +1,7 @@
 <template>
   <div
     class="input-ui"
-    :class="[{ error, large, block }, type]"
+    :class="[{ error, large, block, disabled }, type]"
     @click="$emit('click', $event)"
   >
     <label v-if="label" class="mb-1 inline-block text-sm text-lighter">
@@ -90,14 +90,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-.slide-fade-enter-active,
-.slide-fade-leave-active {
-  transition: all 300ms ease;
-}
-.slide-fade-enter,
-.slide-fade-leave-to {
-  transform: translateY(-10px);
-  opacity: 0;
-}
-</style>

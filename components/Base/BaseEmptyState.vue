@@ -1,9 +1,10 @@
 <template>
   <div class="empty-state-ui">
-    <div v-if="!!icon" class="empty-state-ui--header">
-      <div class="icon">
+    <div class="empty-state-ui--header">
+      <div v-if="!!icon" class="icon">
         <v-mdi :name="icon" size="36"></v-mdi>
       </div>
+      <slot v-else name="header"></slot>
     </div>
     <div class="empty-state-ui--content">
       <p class="title">{{ title }}</p>

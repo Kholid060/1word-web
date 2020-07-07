@@ -18,8 +18,9 @@ function generator(dataArray, length = 10) {
 	https://dev.to/yongliang24/solve-the-two-sum-problem-with-javascript-4jlk
 */
 function twoSum(target) {
-  const numArray = new Array(target).fill().map((i, index) => (index += 1));
+  const numArray = Array.from({ length: target }, (i, index) => (index += 1));
   const comp = {};
+
   for (const eachNum in numArray) {
     const otherNum = target - numArray[eachNum];
     if (otherNum in comp) {
@@ -27,6 +28,7 @@ function twoSum(target) {
     }
     comp[numArray[eachNum]] = eachNum;
   }
+
   return 'target not found';
 }
 /* -------------------------------------------------------------------------------- */

@@ -1,7 +1,7 @@
 <template>
   <card-ui class="add-word" tabindex="0">
     <p slot="header">Add word</p>
-    <form @submit.prevent="addWord" @keyup.enter="addWord">
+    <form @submit.prevent="addWord">
       <div class="flex">
         <div
           v-tooltip.bottom="'Translate word'"
@@ -16,21 +16,27 @@
           class="flex-1"
           :value="word"
           hide-details
+          :error="$v.word.$invalid && $v.word.$dirty"
           placeholder="Word"
           @input="inputWord"
         ></input-ui>
       </div>
       <div class="hidden-input">
-        <textarea-ui
-          v-model="meaning"
-          placeholder="Meaning"
-          min-height="100px"
-          block
-          class="mt-4 mb-8"
-        ></textarea-ui>
+        <div class="mt-4 mb-8">
+          <textarea-ui
+            v-model="meaning"
+            placeholder="Meaning"
+            min-height="100px"
+            :error="$v.meaning.$invalid && $v.meaning.$dirty"
+            hide-details
+            :disabled="isTranslating"
+            block
+          ></textarea-ui>
+          <p class="text-right text-lighter">{{ meaning.length }}/50</p>
+        </div>
         <button-ui
           block
-          :disabled="!(!!word && !!meaning)"
+          :disabled="$v.$invalid"
           type="primary"
           :loading="loading"
         >
@@ -41,23 +47,30 @@
   </card-ui>
 </template>
 <script>
+import { validationMixin } from 'vuelidate';
+import { required, maxLength } from 'vuelidate/lib/validators';
 import debounce from 'lodash.debounce';
 import shortid from 'shortid';
-import validateWord from '~/utils/validateWord';
-import firestore from '~/utils/firestore';
+import { validateWord } from '~/utils/helper';
+import { database } from '~/utils/firebase';
 
 export default {
+  mixins: [validationMixin],
   data: () => ({
     word: '',
     meaning: '',
-    loading: false
+    loading: false,
+    isTranslating: false
   }),
   methods: {
     inputWord: debounce(function(value) {
-      this.word = value.replace(/\s/g, '');
+      /* eslint-disable-next-line */
+      const specialCharsRegex = /[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/\s]/gi;
+
+      this.word = value.replace(specialCharsRegex, '');
     }, 500),
     addWord() {
-      if (this.word === '' && this.meaning === '') return;
+      if (this.$v.$invalid) return;
 
       const WordModel = this.$store.$db().model('words');
 
@@ -65,7 +78,7 @@ export default {
         .where((word) => {
           return validateWord(word, {
             title: this.word,
-            languageId: this.$route.params.id
+            langId: this.$route.params.id
           });
         })
         .exists();
@@ -73,20 +86,37 @@ export default {
       this.loading = true;
 
       if (!isWordExist) {
+        const wordId = shortid.generate();
+        const langId = this.$route.params.id;
+        const { localId } = this.$store.state.user;
         const word = {
-          id: shortid.generate(),
           title: this.word,
           meaning: this.meaning,
-          languageId: this.$route.params.id,
           timestamp: Date.now()
         };
 
-        firestore
-          .reference(`users/${this.$store.state.user.localId}/words`)
+        database
+          .ref(`users/${localId}/words/${langId}/${wordId}`)
           .set(word)
           .then(async () => {
+            const date = new Date();
+            const chartKey = `${date.getMonth()}-${date.getDate()}`;
+            const wordChart = { ...this.$store.state.chart.w };
+            const chartKeys = Object.keys(wordChart);
+
+            if (chartKeys.length > 30) {
+              delete wordChart[chartKeys[0]];
+            }
+
+            await database.ref(`users/${localId}/charts`).set({
+              w: {
+                ...wordChart,
+                [chartKey]: wordChart[chartKey] ? wordChart[chartKey] + 1 : 1
+              }
+            });
+
             await WordModel.insert({
-              data: word
+              data: { ...word, id: wordId, langId }
             });
 
             this.loading = false;
@@ -101,6 +131,8 @@ export default {
       }
     },
     translateWord() {
+      this.isTranslating = true;
+
       const baseURL = 'https://translate.yandex.net/api/v1.5/tr.json/translate';
 
       fetch(
@@ -108,8 +140,21 @@ export default {
       )
         .then((response) => response.json())
         .then(({ text }) => {
+          this.isTranslating = false;
           this.meaning = text[0];
+        })
+        .catch(() => {
+          this.isTranslating = false;
         });
+    }
+  },
+  validations: {
+    word: {
+      required
+    },
+    meaning: {
+      required,
+      maxLength: maxLength(50)
     }
   }
 };

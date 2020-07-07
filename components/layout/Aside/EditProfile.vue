@@ -1,5 +1,5 @@
 <template>
-  <div class="edit-profile flex-auto mt-8 mb-6 px-8 overflow-auto">
+  <div class="edit-profile h-full">
     <list-ui @click="$emit('close')">
       <v-mdi slot="prefix" name="mdi-arrow-right" :rotate="180"></v-mdi>
       Go back

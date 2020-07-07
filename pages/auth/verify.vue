@@ -22,7 +22,7 @@
   </div>
 </template>
 <script>
-import firebaseAuth from '~/utils/firebaseAuth';
+import { auth } from '~/utils/firebase';
 
 export default {
   data: () => ({
@@ -30,25 +30,40 @@ export default {
   }),
   middleware({ store, redirect }) {
     const { user } = store.state;
-
     if (!user) {
       redirect('/auth');
     } else if (user && user.emailVerified) {
       redirect('/dashboard');
     }
   },
+  mounted() {
+    const { extension } = this.$route.query;
+
+    if (extension) {
+      this.$toasted.error(
+        'You need to verify your email address to start using this extension',
+        {
+          position: 'top-center',
+          duration: null,
+          action: {
+            text: 'Cancel',
+            onClick: (e, toastObject) => {
+              toastObject.goAway(0);
+            }
+          }
+        }
+      );
+    }
+  },
   methods: {
     async useAnotherAccount() {
-      await firebaseAuth.signOut();
-
+      await auth.signOut();
       this.$router.replace('/auth');
     },
     async resendVerifyEmail() {
       this.loading = true;
       const { email } = this.$store.state.user;
-
-      await firebaseAuth.sendOobCode('VERIFY_EMAIL', email);
-
+      await auth.sendOobCode('VERIFY_EMAIL', email);
       this.$toast.show('Check your email inbox');
     }
   },

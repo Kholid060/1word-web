@@ -19,8 +19,7 @@
 export default {
   props: {
     id: String,
-    active: Boolean,
-    wordLength: [String, Number]
+    active: Boolean
   }
 };
 </script>

@@ -10,10 +10,9 @@ export default class Practice extends Model {
       correct: this.number(0),
       wrong: this.number(0),
       score: this.number(0),
-      question_length: this.number(0),
-      languageId: this.attr(null),
-      timestamp: this.number(0),
-      dataPath: this.string('')
+      qLength: this.number(0),
+      langId: this.attr(null),
+      timestamp: this.number(0)
     };
   }
 

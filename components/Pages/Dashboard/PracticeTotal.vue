@@ -6,10 +6,10 @@
         class="rounded-md bg-primary text-white inline-block text-center"
         style="padding: 2px 0; width: 30px"
       >
-        {{ data.length }}
+        {{ sumLength }}
       </span>
     </p>
-    <p v-if="data.length === 0" class="text-lighter text-center">
+    <p v-if="Object.values(data).length === 0" class="text-lighter text-center">
       No data
     </p>
     <div v-else id="practice-chart"></div>
@@ -20,77 +20,51 @@ import { Chart } from 'frappe-charts/dist/frappe-charts.min.esm';
 import { languageFilter } from '~/utils/getLang';
 
 export default {
-  props: {
-    data: Array
-  },
-  data: () => ({
-    chart: null
-  }),
-  watch: {
-    data: {
-      handler() {
-        this.fetchData().then(({ labels, data }) => {
-          this.chart.update({
-            labels,
-            datasets: [
-              {
-                name: 'Practice',
-                type: 'bar',
-                values: data
-              }
-            ]
-          });
-        });
-      },
-      deep: true
+  computed: {
+    sumLength() {
+      return Object.values(this.data).reduce((sum, item) => sum + item, 0) || 0;
+    },
+    data() {
+      return this.$store.state.chart.pt;
     }
   },
   mounted() {
-    this.fetchData().then(({ labels, data }) => {
-      this.chart = new Chart('#practice-chart', {
-        data: {
-          labels,
-          datasets: [
-            {
-              name: 'Practice',
-              type: 'bar',
-              values: data
-            }
-          ]
-        },
-        barOptions: {
-          spaceRatio: 0.2
-        },
-        tooltipOptions: {
-          formatTooltipY: (d) => `${d}x`
-        },
-        type: 'bar',
-        height: 200
-      });
+    if (Object.keys(this.data).length === 0) return;
+
+    const generateData = (data) => {
+      return {
+        labels: Object.keys(data).map((id) => languageFilter(id)),
+        datasets: [
+          {
+            name: 'Practice',
+            type: 'bar',
+            values: Object.values(data)
+          }
+        ]
+      };
+    };
+
+    const chart = new Chart('#practice-chart', {
+      data: generateData(this.data),
+      barOptions: {
+        spaceRatio: 0.2
+      },
+      tooltipOptions: {
+        formatTooltipY: (d) => `${d}x`
+      },
+      type: 'bar',
+      height: 200
     });
-  },
-  methods: {
-    fetchData() {
-      return new Promise((resolve, reject) => {
-        /* eslint-disable-next-line */
-        if (this.data.length === 0) reject();
 
-        const objectData = this.data.reduce((data, { languageId }) => {
-          const countryName = languageFilter(languageId);
-
-          data[countryName]
-            ? (data[countryName] += 1)
-            : (data[countryName] = 1);
-
-          return data;
-        }, {});
-
-        resolve({
-          labels: Object.keys(objectData),
-          data: Object.values(objectData)
+    this.$watch(
+      () => this.data,
+      (value) => {
+        chart.update({
+          data: generateData(value)
         });
-      });
-    }
+      },
+      { deep: true }
+    );
   }
 };
 </script>

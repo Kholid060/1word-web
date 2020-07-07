@@ -18,17 +18,17 @@
       </div>
       <div class="overflow-auto mb-5 px-5" style="height: 300px">
         <list-ui
-          v-for="languageId in filteredLanguages"
-          :key="languageId"
-          @click="addLanguage(languageId)"
+          v-for="langId in filteredLanguages"
+          :key="langId"
+          @click="addLanguage(langId)"
         >
-          <flag-ui size="40" :code="languageId | getLang('country')"></flag-ui>
+          <flag-ui size="40" :code="langId | getLang('country')"></flag-ui>
           <div class="ml-4">
             <p class="leading-snug">
-              {{ languageId | getLang }}
+              {{ langId | getLang }}
             </p>
             <p class="leading-snug text-lighter">
-              {{ languageId | getLang('native') }}
+              {{ langId | getLang('native') }}
             </p>
           </div>
         </list-ui>
@@ -38,7 +38,7 @@
 </template>
 <script>
 import { supportedLanguages, languageFilter } from '~/utils/getLang';
-import firestore from '~/utils/firestore';
+import { database } from '~/utils/firebase';
 
 export default {
   data: () => ({
@@ -47,8 +47,8 @@ export default {
   }),
   computed: {
     filteredLanguages() {
-      return this.languages.filter((languageId) => {
-        return languageFilter(languageId)
+      return this.languages.filter((langId) => {
+        return languageFilter(langId)
           .toLowerCase()
           .match(this.search.toLowerCase());
       });
@@ -62,22 +62,20 @@ export default {
         .all();
 
       this.languages = supportedLanguages.filter((item) => {
-        return !languages.some((language) => item === language.languageId);
+        return !languages.some((language) => item === language.langId);
       });
     },
-    addLanguage(languageId) {
+    addLanguage(langId) {
       const languageModel = this.$store.$db().model('languages');
-      const languages = languageModel.all().map(({ languageId }) => languageId);
+      const languages = languageModel.all().map(({ langId }) => langId);
 
-      firestore
-        .reference(`users/${this.$store.state.user.localId}`)
-        .set({
-          languages: [...languages, languageId]
-        })
+      database
+        .ref(`users/${this.$store.state.user.localId}/languages`)
+        .set([...languages, langId])
         .then(() => {
           languageModel.insert({
             data: {
-              languageId
+              langId
             }
           });
           this.$modal.hide('add-language');

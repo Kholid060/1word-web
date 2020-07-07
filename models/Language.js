@@ -2,21 +2,23 @@ import { Model } from '@vuex-orm/core';
 import Word from './Word';
 import Practice from './Practice';
 
-export default class Learn extends Model {
+export default class Language extends Model {
   static entity = 'languages';
 
-  static primaryKey = 'languageId';
+  static primaryKey = 'langId';
 
   static fields() {
     return {
-      languageId: this.string(''),
-      words: this.hasMany(Word, 'languageId', 'languageId'),
-      practices: this.hasMany(Practice, 'languageId', 'languageId')
+      langId: this.string(''),
+      words: this.hasMany(Word, 'langId', 'langId'),
+      practices: this.hasMany(Practice, 'langId', 'langId'),
+      retrieveWords: this.attr(false),
+      retrievePractices: this.attr(false)
     };
   }
 
   static afterDelete(model) {
-    Practice.delete((practice) => practice.languageId === model.languageId);
-    Word.delete((word) => word.languageId === model.languageId);
+    Practice.delete((practice) => practice.langId === model.langId);
+    Word.delete((word) => word.langId === model.langId);
   }
 }

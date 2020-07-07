@@ -4,9 +4,8 @@
     <table class="table-auto table-ui">
       <thead>
         <tr>
-          <th v-show="!hideName"></th>
           <th style="width: 150px" class="text-left">
-            {{ !hideName ? 'Name' : 'Date' }}
+            Date
           </th>
           <th>Wrong</th>
           <th>Correct</th>
@@ -17,32 +16,15 @@
       </thead>
       <tbody>
         <tr v-for="item in paginateData" :key="item.id" class="text-center">
-          <template v-if="!hideName">
-            <td style="width: 100px">
-              <flag-ui
-                size="40"
-                :code="item.languageId | getLang('country')"
-              ></flag-ui>
-            </td>
-            <td
-              class="text-left"
-              :title="formatDate(item.timestamp, 'DD MMMM YYYY')"
-            >
-              <p>{{ item.languageId | getLang }}</p>
-              <p class="text-sm text-light">{{ formatDate(item.timestamp) }}</p>
-            </td>
-          </template>
-          <template v-else>
-            <td
-              class="text-left"
-              :title="formatDate(item.timestamp, 'DD MMMM YYYY')"
-            >
-              <p>{{ formatDate(item.timestamp) }}</p>
-            </td>
-          </template>
+          <td
+            class="text-left"
+            :title="formatDate(item.timestamp, 'DD MMMM YYYY')"
+          >
+            <p>{{ formatDate(item.timestamp) }}</p>
+          </td>
           <td class="text-danger">{{ item.wrong }}</td>
           <td style="color: var(--green)">{{ item.correct }}</td>
-          <td>{{ item.question_length }}</td>
+          <td>{{ item.qLength }}</td>
           <td>
             <p
               class="inline-block text-white rounded-lg"
@@ -52,47 +34,91 @@
               {{ item.score }}
             </p>
           </td>
-          <td v-if="showDelete">
+          <!-- <td v-if="showDelete">
             <v-mdi
               name="mdi-delete"
               class="text-danger cursor-pointer"
               @click="$emit('delete', item)"
             ></v-mdi>
-          </td>
+          </td> -->
         </tr>
       </tbody>
     </table>
-    <p v-if="data.length === 0" class="py-5 text-center text-light">No data</p>
+    <div class="text-center py-5">
+      <circular-progress-ui v-if="loading" spinner></circular-progress-ui>
+      <p v-else-if="practices.length === 0" class="text-light">
+        No data
+      </p>
+    </div>
     <paginate-ui
       v-if="showPagination"
       v-model="currentPage"
       class="mt-8"
-      :page-count="Math.ceil(data.length / perPage)"
+      :page-count="Math.ceil(practices.length / perPage)"
       :per-page.sync="perPage"
     ></paginate-ui>
   </card-ui>
 </template>
 <script>
 import dayjs from 'dayjs';
+import Language from '~/models/Language';
+import Practice from '~/models/Practice';
+import { normalizeData } from '~/utils/helper';
+import { database } from '~/utils/firebase';
 
 export default {
   props: {
-    hideName: Boolean,
     showDelete: Boolean,
-    showPagination: Boolean,
-    data: Array
+    showPagination: Boolean
+  },
+  fetch() {
+    const { id } = this.$route.params;
+    const { localId } = this.$store.state.user;
+    const { retrievePractices } = Language.find(id);
+
+    if (retrievePractices || this.practices.length > 0) return;
+
+    this.loading = true;
+
+    database
+      .ref(`users/${localId}/practices/${id}`)
+      .get()
+      .then((practices) => {
+        this.loading = false;
+
+        Practice.insert({
+          data: normalizeData(practices, id)
+        });
+
+        Language.insertOrUpdate({
+          data: {
+            langId: id,
+            retrievePractices: true
+          }
+        });
+      })
+      .catch(() => (this.loading = false));
   },
   data: () => ({
     currentPage: 0,
-    perPage: 10
+    perPage: 10,
+    loading: false
   }),
   computed: {
     paginateData() {
       const start = this.currentPage * this.perPage;
       const end = start + this.perPage;
 
-      return this.data.slice(start, end);
+      return this.practices.slice(start, end);
+    },
+    practices() {
+      return Practice.query()
+        .where('langId', this.$route.params.id)
+        .get();
     }
+  },
+  activated() {
+    this.$fetch();
   },
   methods: {
     scoreBackground(score) {

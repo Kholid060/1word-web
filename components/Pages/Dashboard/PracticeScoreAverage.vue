@@ -17,16 +17,12 @@
 </template>
 <script>
 export default {
-  props: {
-    data: Array
-  },
   computed: {
     scoreAverage() {
-      if (this.data.length === 0) return 0;
+      const practiceScores = this.$store.state.chart.sa;
+      const sumScores = practiceScores.reduce((sum, score) => sum + score, 0);
 
-      const sum = this.data.reduce((curr, acc) => (curr += acc.score), 0);
-
-      return Math.floor(sum / this.data.length);
+      return Math.floor(sumScores / practiceScores.length);
     }
   }
 };

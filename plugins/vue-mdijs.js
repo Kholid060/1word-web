@@ -25,7 +25,9 @@ import {
   mdiDotsHorizontal,
   mdiLogout,
   mdiChartAreasplineVariant,
-  mdiHistory
+  mdiHistory,
+  mdiGoogleChrome,
+  mdiWeatherNight
 } from '@mdi/js';
 
 VueMdijs.add({
@@ -53,7 +55,9 @@ VueMdijs.add({
   mdiDotsHorizontal,
   mdiLogout,
   mdiChartAreasplineVariant,
-  mdiHistory
+  mdiHistory,
+  mdiGoogleChrome,
+  mdiWeatherNight
 });
 
 Vue.use(VueMdijs);

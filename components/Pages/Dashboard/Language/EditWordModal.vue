@@ -19,6 +19,7 @@
           type="primary"
           :disabled="!data.meaning"
           width="100px"
+          :loading="loading"
           @click="updateWord"
         >
           Save
@@ -28,12 +29,13 @@
   </modal>
 </template>
 <script>
-import firestore from '~/utils/firestore';
+import { database } from '~/utils/firebase';
 
 export default {
   data: () => ({
+    loading: false,
     data: {
-      word: '',
+      title: '',
       meaning: ''
     }
   }),
@@ -42,8 +44,11 @@ export default {
       this.data = params;
     },
     updateWord() {
-      firestore
-        .reference(this.data.dataPath)
+      const { langId, id } = this.data;
+      this.loading = true;
+
+      database
+        .ref(`users/${this.$store.state.user.localId}/words/${langId}/${id}`)
         .update({
           meaning: this.data.meaning
         })
@@ -59,9 +64,13 @@ export default {
             });
 
           this.clearAll();
+        })
+        .catch(() => {
+          this.$toast.error('Something went wrong');
         });
     },
     clearAll() {
+      this.loading = false;
       this.data = {
         word: '',
         meaing: ''

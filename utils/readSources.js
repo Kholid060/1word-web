@@ -253,3 +253,5 @@ export const sources = [
     sources: []
   }
 ];
+
+export default sources;

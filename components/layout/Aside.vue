@@ -15,24 +15,35 @@
       <div class="profile text-center">
         <div class="relative rounded-full border inline-block p-2">
           <img src="~/assets/svg/male-avatar.svg" class="h-32" />
-          <scale-transition>
-            <div
-              v-if="!isEdit"
-              class="absolute shadow-xl rounded-full bg-default cursor-pointer"
-              style="bottom: 0; right: 0; padding: 5px 11px 10px 11px"
-              @click="isEdit = true"
-            >
-              <v-mdi size="18" name="mdi-pencil"></v-mdi>
-            </div>
-          </scale-transition>
         </div>
         <p class="font-semibold mt-2">{{ user.displayName }}</p>
         <p class="text-lighter">{{ user.email }}</p>
       </div>
-      <slide-transition mode="out-in" direction="left">
-        <edit-profile v-if="isEdit" @close="isEdit = false"></edit-profile>
-        <profile v-else></profile>
-      </slide-transition>
+      <div class="flex-auto mt-8 mb-6 overflow-auto px-8">
+        <slide-transition mode="out-in" direction="left">
+          <edit-profile v-if="isEdit" @close="isEdit = false"></edit-profile>
+          <div v-else class="h-full">
+            <list-ui>
+              <v-mdi slot="prefix" name="mdi-weather-night"></v-mdi>
+              <p class="flex-grow">Dark Mode</p>
+              <switch-ui v-model="darkMode"></switch-ui>
+            </list-ui>
+            <list-ui class="my-2" @click="isEdit = true">
+              <v-mdi slot="prefix" name="mdi-cog"></v-mdi>
+              Settings
+            </list-ui>
+            <list-ui
+              tag="a"
+              href="https://chrome.google.com/webstore/detail/1word/egkkjgnnebpeldfhiljmgfachakbbmph"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <v-mdi slot="prefix" name="mdi-google-chrome"></v-mdi>
+              Get Extension
+            </list-ui>
+          </div>
+        </slide-transition>
+      </div>
       <div class="px-8">
         <button-ui block plain type="danger" class="logout-btn" @click="logout">
           Logout
@@ -44,19 +55,30 @@
 </template>
 <script>
 import EditProfile from './Aside/EditProfile.vue';
-import Profile from './Aside/Profile.vue';
 import firebaseAuth from '~/utils/firebaseAuth';
 import SlideTransition from '~/components/Transitions/SlideTransition.vue';
-import ScaleTransition from '~/components/Transitions/ScaleTransition.vue';
 
 export default {
-  components: { EditProfile, Profile, SlideTransition, ScaleTransition },
+  components: { EditProfile, SlideTransition },
   data: () => ({
     isEdit: false
   }),
   computed: {
     user() {
       return this.$store.state.user || {};
+    },
+    darkMode: {
+      set(value) {
+        localStorage.setItem('dark', value);
+
+        this.$store.commit('updateState', {
+          key: 'dark',
+          data: value
+        });
+      },
+      get() {
+        return this.$store.state.dark;
+      }
     }
   },
   methods: {
@@ -77,7 +99,7 @@ export default {
             await firebaseAuth.signOut();
             await this.$store.dispatch('cleanup');
 
-            this.$router.push('/redirect');
+            this.$router.push('/auth');
             this.$modal.hide('confirm');
           }
         }

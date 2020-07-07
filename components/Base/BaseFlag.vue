@@ -1,6 +1,6 @@
 <template>
   <img
-    :src="require(`~/assets/svg/flags/${code}.svg`)"
+    :src="code ? require(`~/assets/svg/flags/${code}.svg`) : ''"
     class="rounded-lg flag"
     :width="size"
     :height="size"

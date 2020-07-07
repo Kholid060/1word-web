@@ -33,7 +33,7 @@
 <script>
 import { validationMixin } from 'vuelidate';
 import { email, required } from 'vuelidate/lib/validators';
-import firebaseAuth from '~/utils/firebaseAuth';
+import { auth } from '~/utils/firebase';
 
 export default {
   mixins: [validationMixin],
@@ -50,8 +50,7 @@ export default {
   methods: {
     resetPassword() {
       this.loading = true;
-
-      firebaseAuth
+      auth
         .sendOobCode('PASSWORD_RESET', this.email)
         .then(() => {
           this.$toast.show('Check your email inbox');

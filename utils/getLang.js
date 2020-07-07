@@ -76,9 +76,10 @@ export const AllLanguage = { ...languages };
 
 export const supportedLanguages = Object.keys(languages);
 
-export function languageFilter(id = '', name = 'name') {
+export function languageFilter(id, name = 'name') {
+  if (typeof name !== 'string' || typeof id !== 'string') return;
+
   const countryId = id.toLowerCase();
 
-  if (id && typeof id === 'string')
-    return name === '' ? languages[countryId] : languages[countryId][name];
+  return name === '' ? languages[countryId] : languages[countryId][name];
 }

@@ -4,7 +4,7 @@
     <div class="progress-ui--wrapper" :style="{ width, height }">
       <div
         class="progress-ui--inner"
-        :style="{ width: value + '%' }"
+        :style="{ width: value > 100 ? '100%' : `${value}%` }"
         :class="[type]"
       ></div>
     </div>

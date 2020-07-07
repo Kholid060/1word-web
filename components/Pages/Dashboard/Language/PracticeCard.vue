@@ -47,14 +47,18 @@
   </card-ui>
 </template>
 <script>
+import Word from '~/models/Word';
+
 export default {
-  props: {
-    wordLength: [Number, String]
-  },
   data: () => ({
     questionLength: 10
   }),
   computed: {
+    wordLength() {
+      return Word.query()
+        .where('langId', this.$route.params.id)
+        .count();
+    },
     isNotValid() {
       return this.questionLength < 10 || this.questionLength > this.wordLength;
     }

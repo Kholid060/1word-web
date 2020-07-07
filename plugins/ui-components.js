@@ -1,2 +1,30 @@
-import '~/components/Base';
+import Vue from 'vue';
+
+import BaseButton from '~/components/Base/BaseButton.vue';
+import BaseCard from '~/components/Base/BaseCard.vue';
+import BaseModal from '~/components/Base/BaseModal.vue';
+import BaseCircularProgress from '~/components/Base/BaseCircularProgress.vue';
+import BaseEmptyState from '~/components/Base/BaseEmptyState.vue';
+import BaseFlag from '~/components/Base/BaseFlag.vue';
+import BaseInput from '~/components/Base/BaseInput.vue';
+import BaseList from '~/components/Base/BaseList.vue';
+import BasePaginate from '~/components/Base/BasePaginate.vue';
+import BaseProgress from '~/components/Base/BaseProgress.vue';
+import BaseSelect from '~/components/Base/BaseSelect.vue';
+import BaseSwitch from '~/components/Base/BaseSwitch.vue';
+import BaseTextarea from '~/components/Base/BaseTextarea.vue';
 import '~/assets/scss/components/_table.scss';
+
+Vue.component(BaseButton.name, BaseButton);
+Vue.component(BaseCard.name, BaseCard);
+Vue.component(BaseModal.name, BaseModal);
+Vue.component(BaseCircularProgress.name, BaseCircularProgress);
+Vue.component(BaseEmptyState.name, BaseEmptyState);
+Vue.component(BaseFlag.name, BaseFlag);
+Vue.component(BaseInput.name, BaseInput);
+Vue.component(BaseList.name, BaseList);
+Vue.component(BasePaginate.name, BasePaginate);
+Vue.component(BaseProgress.name, BaseProgress);
+Vue.component(BaseSelect.name, BaseSelect);
+Vue.component(BaseSwitch.name, BaseSwitch);
+Vue.component(BaseTextarea.name, BaseTextarea);
