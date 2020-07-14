@@ -15,7 +15,7 @@
   </div>
 </template>
 <script>
-import firebaseAuth from '~/utils/firebaseAuth';
+import { auth } from '~/utils/firebase';
 
 export default {
   data: () => ({
@@ -30,7 +30,7 @@ export default {
         btn: {
           text: 'Save',
           handler: (displayName) => {
-            firebaseAuth
+            auth
               .updateProfile({
                 displayName
               })
@@ -48,7 +48,7 @@ export default {
     resetPassword() {
       this.loadingResetPassword = true;
 
-      firebaseAuth
+      auth
         .sendOobCode('PASSWORD_RESET', this.$store.state.user.email)
         .then((data) => {
           this.$toast.show('Check your email inbox');

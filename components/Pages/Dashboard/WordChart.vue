@@ -1,29 +1,51 @@
 <template>
   <card-ui no-padding-content style="overflow: visible;">
     <p slot="header">Words</p>
-    <p
-      v-if="Object.keys(data).length === 0"
-      class="text-center text-lighter py-20"
-    >
-      No data
-    </p>
-    <div v-else class="py-5 word-chart"></div>
+    <div class="py-5 word-chart"></div>
   </card-ui>
 </template>
 <script>
 import { Chart } from 'frappe-charts/dist/frappe-charts.min.esm';
 import dayjs from 'dayjs';
+import { isObject } from '~/utils/helper';
 
 export default {
+  data: () => ({
+    chart: null
+  }),
   computed: {
     data() {
       return this.$store.state.chart.w;
     }
   },
+  watch: {
+    data: {
+      handler(value) {
+        if (this.chart !== null) this.chart.update(this.generateData(value));
+      },
+      deep: true
+    }
+  },
   mounted() {
-    if (Object.keys(this.data).length === 0) return;
+    setTimeout(() => {
+      this.chart = new Chart(document.querySelector('.word-chart'), {
+        data: this.generateData(this.data),
+        type: 'line',
+        lineOptions: {
+          regionFill: 1,
+          hideDots: 1
+        }
+      });
+    }, 1000);
+  },
+  methods: {
+    generateData(data) {
+      if (!isObject(data))
+        return {
+          labels: [],
+          datasets: []
+        };
 
-    const generateData = (data) => {
       const year = new Date().getFullYear();
 
       return {
@@ -38,26 +60,7 @@ export default {
           }
         ]
       };
-    };
-
-    const chart = new Chart(document.querySelector('.word-chart'), {
-      data: generateData(this.data),
-      type: 'line',
-      lineOptions: {
-        regionFill: 1,
-        hideDots: 1
-      }
-    });
-
-    this.$watch(
-      () => this.data,
-      (value) => {
-        chart.update({
-          data: generateData(value)
-        });
-      },
-      { deep: true }
-    );
+    }
   }
 };
 </script>

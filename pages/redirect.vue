@@ -4,7 +4,7 @@
   </p>
 </template>
 <script>
-import firebaseAuth from '~/utils/firebaseAuth';
+import { auth } from '~/utils/firebase';
 
 export default {
   mounted() {
@@ -19,7 +19,7 @@ export default {
   methods: {
     async fetchUser() {
       try {
-        await firebaseAuth.fetchProfile();
+        await auth.fetchProfile();
 
         const user = await this.$store.dispatch('fetchUser');
 

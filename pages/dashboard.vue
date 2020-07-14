@@ -52,6 +52,8 @@ export default {
       .ref(`users/${localId}/languages`)
       .get()
       .then((languages) => {
+        if (!Array.isArray(languages)) return;
+
         this.$store.dispatch('entities/create', {
           entity: 'languages',
           data: languages.map((langId) => ({ langId }))

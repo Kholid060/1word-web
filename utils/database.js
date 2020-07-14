@@ -75,20 +75,15 @@ export class Database {
     });
   }
 
-  async refreshToken() {
-    if (Date.now() < this.auth.user.tokenManager.expiresAt)
-      await this.auth.refreshIdToken();
-  }
-
   async authorizedRequest({ path, init, query = '' }) {
     const baseURL = `${this.databaseUrl}/${path}.json`;
 
     if (this.auth.user) {
-      await this.refreshToken();
-      const user = localStorage.getItem(this.auth.sKey('User'));
-      const { tokenManager } = JSON.parse(user);
+      await this.auth.refreshIdToken();
 
-      return fetch(`${baseURL}?auth=${tokenManager.idToken}&${query}`, init);
+      const { idToken } = this.auth.user.tokenManager;
+
+      return fetch(`${baseURL}?auth=${idToken}&${query}`, init);
     }
 
     return fetch(`${baseURL}?${query}`, init);

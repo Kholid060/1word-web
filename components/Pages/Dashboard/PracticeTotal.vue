@@ -9,10 +9,7 @@
         {{ sumLength }}
       </span>
     </p>
-    <p v-if="Object.values(data).length === 0" class="text-lighter text-center">
-      No data
-    </p>
-    <div v-else id="practice-chart"></div>
+    <div id="practice-chart"></div>
   </card-ui>
 </template>
 <script>

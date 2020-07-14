@@ -72,7 +72,7 @@ const languages = {
   }
 };
 
-export const AllLanguage = { ...languages };
+export const allLanguages = { ...languages };
 
 export const supportedLanguages = Object.keys(languages);
 

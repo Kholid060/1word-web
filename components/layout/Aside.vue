@@ -55,7 +55,7 @@
 </template>
 <script>
 import EditProfile from './Aside/EditProfile.vue';
-import firebaseAuth from '~/utils/firebaseAuth';
+import { auth } from '~/utils/firebase';
 import SlideTransition from '~/components/Transitions/SlideTransition.vue';
 
 export default {
@@ -96,7 +96,7 @@ export default {
           type: 'danger',
           text: 'Logout',
           handler: async () => {
-            await firebaseAuth.signOut();
+            await auth.signOut();
             await this.$store.dispatch('cleanup');
 
             this.$router.push('/auth');
