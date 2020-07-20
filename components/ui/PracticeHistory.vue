@@ -1,10 +1,15 @@
 <template>
   <card-ui class="practice-history">
-    <p slot="header">Practice History</p>
-    <table class="table-auto table-ui">
+    <template slot="header">
+      <skeleton-box-ui v-if="loading" type="text" />
+      <p v-else>Practice History</p>
+    </template>
+    <skeleton-box-ui v-if="loading" height="170px" width="100%" />
+    <table v-else class="table-auto table-ui">
       <thead>
         <tr>
-          <th style="width: 150px" class="text-left">
+          <th v-if="showFlag"></th>
+          <th v-else style="width: 150px" class="text-left">
             Date
           </th>
           <th>Wrong</th>
@@ -16,7 +21,11 @@
       </thead>
       <tbody>
         <tr v-for="item in paginateData" :key="item.id" class="text-center">
+          <td v-if="showFlag" style="width: 70px">
+            <flag-ui :code="item.langId | getLang('country')"></flag-ui>
+          </td>
           <td
+            v-else
             class="text-left"
             :title="formatDate(item.timestamp, 'DD MMMM YYYY')"
           >
@@ -24,7 +33,7 @@
           </td>
           <td class="text-danger">{{ item.wrong }}</td>
           <td style="color: var(--green)">{{ item.correct }}</td>
-          <td>{{ item.qLength }}</td>
+          <td>{{ item.correct + item.wrong }}</td>
           <td>
             <p
               class="inline-block text-white rounded-lg"
@@ -44,81 +53,46 @@
         </tr>
       </tbody>
     </table>
-    <div class="text-center py-5">
-      <circular-progress-ui v-if="loading" spinner></circular-progress-ui>
-      <p v-else-if="practices.length === 0" class="text-light">
-        No data
-      </p>
-    </div>
+    <p
+      v-show="data.length === 0 && !loading"
+      class="text-light text-center py-5"
+    >
+      No data
+    </p>
     <paginate-ui
       v-if="showPagination"
       v-model="currentPage"
       class="mt-8"
-      :page-count="Math.ceil(practices.length / perPage)"
+      :page-count="Math.ceil(data.length / perPage)"
       :per-page.sync="perPage"
     ></paginate-ui>
   </card-ui>
 </template>
 <script>
 import dayjs from 'dayjs';
-import Language from '~/models/Language';
-import Practice from '~/models/Practice';
-import { normalizeData } from '~/utils/helper';
-import { database } from '~/utils/firebase';
 
 export default {
   props: {
     showDelete: Boolean,
-    showPagination: Boolean
-  },
-  fetch() {
-    const { id } = this.$route.params;
-    const { localId } = this.$store.state.user;
-    const { retrievePractices } = Language.find(id);
-
-    if (retrievePractices || this.practices.length > 0) return;
-
-    this.loading = true;
-
-    database
-      .ref(`users/${localId}/practices/${id}`)
-      .get()
-      .then((practices) => {
-        this.loading = false;
-
-        Practice.insert({
-          data: normalizeData(practices, id)
-        });
-
-        Language.insertOrUpdate({
-          data: {
-            langId: id,
-            retrievePractices: true
-          }
-        });
-      })
-      .catch(() => (this.loading = false));
+    showPagination: Boolean,
+    showFlag: Boolean,
+    loading: Boolean,
+    data: {
+      type: Array,
+      default: () => []
+    }
   },
   data: () => ({
     currentPage: 0,
-    perPage: 10,
-    loading: false
+    perPage: 10
   }),
   computed: {
     paginateData() {
       const start = this.currentPage * this.perPage;
       const end = start + this.perPage;
 
-      return this.practices.slice(start, end);
-    },
-    practices() {
-      return Practice.query()
-        .where('langId', this.$route.params.id)
-        .get();
+      return this.data.slice(start, end);
     }
-  },
-  activated() {
-    this.$fetch();
   },
   methods: {
     scoreBackground(score) {

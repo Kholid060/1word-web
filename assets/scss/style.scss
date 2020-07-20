@@ -20,12 +20,17 @@ body {
   z-index: 99;
 }
 
-.swiper-wrapper {
-  display: flex;
+.ct-series-a .ct-area {
+  fill: #1e6ee4 !important;
 }
 
-.swiper-slide {
-  display: inline-block;
+.ct-series-a .ct-line,
+.ct-series-a .ct-point {
+  stroke: #1e6ee4 !important;
+}
+
+.ct-label {
+  @apply text-light #{!important}
 }
 
 .mdi-icon{

@@ -19,6 +19,10 @@ export default {
       class: 'light-theme'
     }
   },
+  loadingIndicator: {
+    name: 'pulse',
+    color: '#0052cc'
+  },
   /*
    ** Customize the progress-bar color
    */
@@ -26,7 +30,7 @@ export default {
   /*
    ** Global CSS
    */
-  css: [],
+  css: ['chartist/dist/chartist.min.css'],
   /*
    ** Plugins to load before mounting the App
    */
@@ -36,7 +40,8 @@ export default {
     './plugins/filters',
     './plugins/nuxt-client-init.js',
     './plugins/v-tooltip',
-    './plugins/vue-js-modal'
+    './plugins/vue-js-modal',
+    './plugins/vue-chartist'
   ],
   /*
    ** Nuxt.js dev-modules
@@ -64,22 +69,5 @@ export default {
   },
   generate: {
     fallback: true
-  },
-  /*
-   ** Build configuration
-   */
-  build: {
-    /*
-     ** You can extend webpack config here
-     */
-    extend(config, ctx) {
-      config.module.rules.push({
-        test: /\.(ogg|mp3|wav|mpe?g)$/i,
-        loader: 'file-loader',
-        options: {
-          name: '[path][name].[ext]'
-        }
-      });
-    }
   }
 };

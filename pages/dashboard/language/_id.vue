@@ -14,9 +14,9 @@
           v-else
           class="mt-6"
           hide-name
+          :data="practices"
           show-pagination
           show-delete
-          @delete="deletePractice"
         ></practice-history>
       </slide-transition>
     </div>
@@ -29,8 +29,10 @@ import PracticeCard from '~/components/Pages/Dashboard/Language/PracticeCard.vue
 import LanguageCard from '~/components/Pages/Dashboard/Language/LanguageCard.vue';
 import PracticeHistory from '~/components/ui/PracticeHistory.vue';
 import SlideTransition from '~/components/Transitions/SlideTransition.vue';
-import { database } from '~/utils/firebase';
 import Language from '~/models/Language';
+import Practice from '~/models/Practice';
+import { request } from '~/utils/firebase';
+import { normalizeData } from '~/utils/helper';
 
 export default {
   components: {
@@ -48,29 +50,46 @@ export default {
   computed: {
     langId() {
       return this.$route.params.id;
+    },
+    practices() {
+      return Practice.query()
+        .where('langId', this.langId)
+        .get();
+    }
+  },
+  watch: {
+    activeTab(newVal) {
+      if (newVal === 'practices') this.fetchPractices();
+    }
+  },
+  methods: {
+    fetchPractices() {
+      const { retrievePractices } = Language.find(this.langId);
+
+      if (retrievePractices || this.practices.length > 0) return;
+
+      this.loading = true;
+
+      request(`/practice/${this.langId}`)
+        .then(({ practices }) => {
+          this.loading = false;
+
+          Practice.insert({
+            data: normalizeData(practices, this.langId)
+          });
+
+          Language.insertOrUpdate({
+            data: {
+              langId: this.langId,
+              retrievePractices: true
+            }
+          });
+        })
+        .catch(() => (this.loading = false));
     }
   },
   validate({ params }) {
     return Language.find(params.id);
-  },
-  activated() {
-    if (typeof this.langId === 'undefined')
-      return this.$router.replace('/dashboard');
-
-    this.activeTab = 'words';
-  },
-  methods: {
-    deletePractice(practice) {
-      database
-        .ref(`users/${this.localId}/practices/${practice.id}`)
-        .delete()
-        .then(() => {
-          this.$store
-            .$db()
-            .model('practices')
-            .delete(practice.$id);
-        });
-    }
   },
   head() {
     return {

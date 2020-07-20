@@ -27,6 +27,7 @@
           <button-ui
             style="min-width: 100px"
             :type="params.btn.type"
+            :loading="loading"
             :disabled="!params.input"
             @click="params.btn.handler(params.input)"
             >{{ params.btn.text }}</button-ui
@@ -59,9 +60,11 @@
           <button-ui
             style="min-width: 100px"
             :type="params.btn.type"
-            @click="params.btn.handler(params.input)"
-            >{{ params.btn.text }}</button-ui
+            :loading="loading"
+            @click="onClick"
           >
+            {{ params.btn.text }}
+          </button-ui>
         </template>
       </card-ui>
     </modal>
@@ -76,6 +79,7 @@ const defaultParams = {
   input: '',
   placeholder: '',
   btn: {
+    loadingOnClick: false,
     type: 'primary',
     text: 'add',
     handler: null
@@ -85,7 +89,8 @@ const defaultParams = {
 export default {
   name: 'ModalUi',
   data: () => ({
-    params: defaultParams
+    params: defaultParams,
+    loading: false
   }),
   methods: {
     modalHandler({ name, params }) {
@@ -101,6 +106,17 @@ export default {
           ...btn
         }
       };
+    },
+    onClick() {
+      try {
+        if (this.params.btn.loadingOnClick) {
+          this.loading = true;
+        }
+
+        this.params.btn.handler(this.params.input);
+      } catch (err) {
+        this.loading = false;
+      }
     },
     hideModal() {
       this.$modal.hide(this.params.name);

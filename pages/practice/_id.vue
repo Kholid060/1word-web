@@ -25,13 +25,13 @@
   </div>
 </template>
 <script>
-import shortid from 'shortid';
 import Header from '~/components/Pages/Practice/Header.vue';
 import Message from '~/components/Pages/Practice/Message.vue';
 import Question from '~/components/Pages/Practice/Question.vue';
 import PracticeComplete from '~/components/Pages/Practice/PracticeComplete.vue';
 import questionGenerator from '~/utils/questionGenerator';
-import { database } from '~/utils/firebase';
+import { request } from '~/utils/firebase';
+import Practice from '~/models/Practice';
 
 export default {
   components: { Header, Message, Question, PracticeComplete },
@@ -83,46 +83,22 @@ export default {
       if (this.isPracticeDone) this.submitPractice();
     },
     submitPractice() {
-      const practiceId = shortid.generate();
-      const langId = this.$route.params.id;
-      const { localId } = this.$store.state.user;
-
       const practice = {
         correct: this.correctCount,
         wrong: this.questions.length - this.correctCount,
         score: (this.correctCount / this.questions.length) * 100,
-        qLength: this.questions.length,
-        timestamp: Date.now()
+        time: Date.now(),
+        langId: this.$route.params.id
       };
 
-      database
-        .ref(`users/${localId}/practices/${langId}/${practiceId}`)
-        .set(practice)
-        .then(async () => {
-          const { chart } = this.$store.state;
-          const updatedScores = [...chart.sa, practice.score];
-
-          await database.ref(`users/${localId}/charts`).update({
-            sa: updatedScores
-          });
-          await this.$store
-            .$db()
-            .model('practices')
-            .insert({
-              data: {
-                ...practice,
-                langId,
-                id: practiceId
-              }
-            });
-          this.$store.commit('updateState', {
-            key: 'chart',
-            data: {
-              ...chart,
-              sa: updatedScores
-            }
-          });
+      request('/practice', {
+        method: 'POST',
+        body: JSON.stringify({ practice })
+      }).then(({ practice }) => {
+        Practice.insert({
+          data: practice
         });
+      });
     },
     answerQuestion(userAnswer) {
       this.answered = true;

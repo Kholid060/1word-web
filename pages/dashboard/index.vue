@@ -1,78 +1,99 @@
 <template>
   <div class="home-page">
-    <div v-if="$fetchState.pending" class="text-center my-12">
-      <circular-progress-ui spinner></circular-progress-ui>
-    </div>
+    <language-list></language-list>
+    <failed-load-data
+      v-if="error"
+      :loading="loading"
+      @fetch="$fetch"
+    ></failed-load-data>
     <template v-else>
-      <failed-load-data
-        v-if="error"
-        :loading="$fetchState.pending"
-        @fetch="$fetch"
-      ></failed-load-data>
-      <template v-else>
-        <language-list></language-list>
-        <word-chart class="col-span-3"></word-chart>
-        <div class="mt-6 flex items-start flex-col lg:flex-row">
-          <reading-list class="w-full lg:w-8/12"></reading-list>
-          <div class="mt-6 lg:mt-0 lg:ml-6 w-full lg:w-4/12">
-            <practice-total></practice-total>
-            <practice-score-average class="mt-6"></practice-score-average>
-          </div>
+      <word-chart :loading="loading" class="col-span-3"></word-chart>
+      <div class="mt-6 flex items-start flex-col lg:flex-row">
+        <practice-history
+          :loading="loading"
+          :data="$store.state.chart.practices"
+          class="w-full lg:w-8/12"
+          show-flag
+        ></practice-history>
+        <div class="mt-6 lg:mt-0 lg:ml-6 w-full lg:w-4/12">
+          <practice-total :loading="loading"></practice-total>
+          <practice-score-average
+            class="mt-6"
+            :loading="loading"
+          ></practice-score-average>
         </div>
-      </template>
+      </div>
     </template>
   </div>
 </template>
 <script>
 import WordChart from '~/components/Pages/Dashboard/WordChart.vue';
-import ReadingList from '~/components/Pages/Dashboard/ReadingList.vue';
+import PracticeHistory from '~/components/ui/PracticeHistory.vue';
 import PracticeTotal from '~/components/Pages/Dashboard/PracticeTotal.vue';
 import PracticeScoreAverage from '~/components/Pages/Dashboard/PracticeScoreAverage.vue';
 import LanguageList from '~/components/Pages/Dashboard/LanguageList.vue';
 import FailedLoadData from '~/components/ui/FailedLoadData.vue';
-import { database } from '~/utils/firebase';
-import { isObject } from '~/utils/helper';
+import { request } from '~/utils/firebase';
 
 export default {
   components: {
     WordChart,
-    ReadingList,
     LanguageList,
     PracticeTotal,
     FailedLoadData,
+    PracticeHistory,
     PracticeScoreAverage
   },
-  fetch() {
-    const { user, chart: defaultChart } = this.$store.state;
+  async fetch() {
+    try {
+      const { chart } = this.$store.state;
 
-    if (!defaultChart.isRetrieved) {
-      database
-        .ref(`users/${user.localId}/charts`)
-        .get()
-        .then((chart) => {
-          if (!isObject(chart)) return;
+      if (!chart.isRetrieved) {
+        const data = await Promise.all([
+          request('/chart'),
+          request('/practice/recent')
+        ]);
+        const { charts } = data[0];
+        const practices = Object.keys(data[1].practices).map((id) => ({
+          id,
+          ...practices[id]
+        }));
 
-          this.error = false;
-          this.$store.commit('updateState', {
-            key: 'chart',
-            data: {
-              ...defaultChart,
-              ...chart,
-              isRetrieved: true
-            }
-          });
-        })
-        .catch(() => {
-          this.error = true;
+        this.error = false;
+        this.$store.commit('updateState', {
+          key: 'chart',
+          data: {
+            ...chart,
+            ...charts,
+            practices,
+            isRetrieved: true
+          }
         });
+      }
+
+      this.error = false;
+    } catch (err) {
+      console.log(err);
+      this.error = true;
     }
   },
   data: () => ({
     error: false
   }),
+  computed: {
+    loading() {
+      return this.$fetchState.pending;
+    }
+  },
   head() {
     return {
-      title: 'Dashboard'
+      title: 'Dashboard',
+      link: [
+        {
+          rel: 'stylesheet',
+          href: 'https://cdn.jsdelivr.net/chartist.js/latest/chartist.min.css'
+        }
+      ]
     };
   }
 };

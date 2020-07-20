@@ -50,9 +50,9 @@
 import { validationMixin } from 'vuelidate';
 import { required, maxLength } from 'vuelidate/lib/validators';
 import debounce from 'lodash.debounce';
-import shortid from 'shortid';
+import Word from '~/models/Word';
 import { validateWord } from '~/utils/helper';
-import { database } from '~/utils/firebase';
+import { request } from '~/utils/firebase';
 
 export default {
   mixins: [validationMixin],
@@ -72,9 +72,7 @@ export default {
     addWord() {
       if (this.$v.$invalid) return;
 
-      const WordModel = this.$store.$db().model('words');
-
-      const isWordExist = WordModel.query()
+      const isWordExist = Word.query()
         .where((word) => {
           return validateWord(word, {
             title: this.word,
@@ -86,37 +84,19 @@ export default {
       this.loading = true;
 
       if (!isWordExist) {
-        const wordId = shortid.generate();
-        const langId = this.$route.params.id;
-        const { localId } = this.$store.state.user;
         const word = {
           title: this.word,
           meaning: this.meaning,
-          timestamp: Date.now()
+          langId: this.$route.params.id
         };
 
-        database
-          .ref(`users/${localId}/words/${langId}/${wordId}`)
-          .set(word)
-          .then(async () => {
-            const date = new Date();
-            const chartKey = `${date.getMonth()}-${date.getDate()}`;
-            const wordChart = { ...this.$store.state.chart.w };
-            const chartKeys = Object.keys(wordChart);
-
-            if (chartKeys.length > 30) {
-              delete wordChart[chartKeys[0]];
-            }
-
-            await database.ref(`users/${localId}/charts`).set({
-              w: {
-                ...wordChart,
-                [chartKey]: wordChart[chartKey] ? wordChart[chartKey] + 1 : 1
-              }
-            });
-
-            await WordModel.insert({
-              data: { ...word, id: wordId, langId }
+        request('/word', {
+          method: 'POST',
+          body: JSON.stringify({ word })
+        })
+          .then(({ word }) => {
+            Word.insert({
+              data: word
             });
 
             this.loading = false;
@@ -131,14 +111,11 @@ export default {
       }
     },
     translateWord() {
+      if (this.word === '') return;
+
       this.isTranslating = true;
 
-      const baseURL = 'https://translate.yandex.net/api/v1.5/tr.json/translate';
-
-      fetch(
-        `${baseURL}?key=${process.env.TRANSLATE_API_KEY}&text=${this.word}&lang=${this.$route.params.id}-en`
-      )
-        .then((response) => response.json())
+      request(`/translate?text=${this.word}&lang=${this.$route.params.id}-en`)
         .then(({ text }) => {
           this.isTranslating = false;
           this.meaning = text[0];

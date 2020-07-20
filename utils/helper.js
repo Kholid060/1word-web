@@ -35,3 +35,7 @@ export function normalizeData(objData, langId) {
     langId
   }));
 }
+
+export function isEmptyObject(obj) {
+  return isObject(obj) && Object.keys(obj).length === 0;
+}

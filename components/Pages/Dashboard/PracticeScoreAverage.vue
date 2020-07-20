@@ -1,7 +1,11 @@
 <template>
   <card-ui>
-    <p slot="header">Score Average</p>
-    <div class="text-center">
+    <template slot="header">
+      <skeleton-box-ui v-if="loading" type="text" />
+      <p v-else>Score Average</p>
+    </template>
+    <skeleton-box-ui v-if="loading" height="160px" width="100%" />
+    <div v-else class="text-center">
       <circular-progress-ui
         stroke-width="12"
         :size="160"
@@ -17,9 +21,15 @@
 </template>
 <script>
 export default {
+  props: {
+    loading: Boolean
+  },
   computed: {
     scoreAverage() {
-      const practiceScores = this.$store.state.chart.sa;
+      const practiceScores = Object.values(this.$store.state.chart.sa);
+
+      if (practiceScores.length === 0) return 0;
+
       const sumScores = practiceScores.reduce((sum, score) => sum + score, 0);
 
       return Math.floor(sumScores / practiceScores.length);

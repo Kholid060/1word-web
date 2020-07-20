@@ -28,15 +28,12 @@
   </div>
 </template>
 <script>
-import { database } from '~/utils/firebase';
+import Word from '~/models/Word';
 
 export default {
   computed: {
     languages() {
-      return this.languageModel
-        .query()
-        .with('words')
-        .get();
+      return Word.get();
     },
     languageModel() {
       return this.$store.$db().model('languages');
@@ -51,28 +48,6 @@ export default {
       return words.length !== 0
         ? `${words.length} words`
         : this.$options.filters.getLang(id, 'native');
-    },
-    async deleteLanguage(langId) {
-      try {
-        const { uid } = this.$store.state.user;
-        const languages = this.languageModel.all().map(({ langId }) => langId);
-        languages.splice(languages.indexOf(langId), 1);
-
-        await database.ref().update({
-          [`users/${uid}/languages`]: languages,
-          [`users/${uid}/words/${langId}`]: null,
-          [`users/${uid}/practices/${langId}`]: null
-        });
-        await this.languageModel.delete(langId);
-
-        this.$modal.hide('confirm');
-
-        if (this.$route.name === 'dashboard-language-id')
-          this.$router.replace('/dashboard');
-      } catch (err) {
-        /* eslint-disable-next-line */
-        console.error(err);
-      }
     },
     showDeleteModal(langId) {
       this.$modal.show('confirm', {

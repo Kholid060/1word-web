@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import VuexORM from '@vuex-orm/core';
 import { validateUser } from '~/utils/helper';
-import { database } from '~/utils/firebase';
 
 const VuexDatabase = new VuexORM.Database();
 
@@ -23,11 +22,12 @@ export const state = () => ({
   chart: {
     isRetrieved: false,
     pt: {},
-    sa: [0],
-    w: {}
+    sa: {},
+    w: {},
+    practices: []
   },
   dark: false,
-  retrieveWord: {},
+  retrieveLanguage: false,
   openProfile: false,
   user: null
 });
@@ -86,31 +86,6 @@ export const actions = {
 
       resolve();
     });
-  },
-  async retrieveData({ state, dispatch }) {
-    // Only get data when user click the language
-    // Optimeze key name in database class
-    const { languages, words, practices } = await database
-      .ref(`/users/${state.user.localId}`)
-      .get();
-
-    await dispatch('entities/create', {
-      entity: 'languages',
-      data: languages.map((id) => {
-        return {
-          id,
-          words: words && words[id] ? Object.values(words[id]) : [],
-          practices:
-            practices && practices[id] ? Object.values(practices[id]) : []
-        };
-      })
-    });
-
-    return {
-      languages,
-      words,
-      practices
-    };
   },
   async cleanup({ commit, dispatch }) {
     commit('updateState', {

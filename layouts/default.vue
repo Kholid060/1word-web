@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <nuxt />
-    <div class="toasted dark-theme" style="display: none"></div>
+    <div
+      class="toasted dark-theme ct-series-a ct-line ct-series-a ct-point ct-label"
+      style="display: none"
+    ></div>
   </div>
 </template>
 <script>

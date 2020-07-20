@@ -28,7 +28,10 @@
   </card-ui>
 </template>
 <script>
-import { database } from '~/utils/firebase';
+import { request } from '~/utils/firebase';
+import Language from '~/models/Language';
+import Word from '~/models/Word';
+import Practice from '~/models/Practice';
 
 export default {
   props: {
@@ -42,38 +45,45 @@ export default {
     tabs: ['words', 'practices']
   }),
   methods: {
-    async deleteLanguage() {
-      try {
-        const languageModel = this.$store.$db().model('languages');
-        const { uid } = this.$store.state.user;
-        const languages = languageModel.all().map(({ langId }) => langId);
-        languages.splice(languages.indexOf(this.langId), 1);
+    deleteLanguage() {
+      const { words, practices } = Language.query()
+        .where('langId', this.langId)
+        .withAll()
+        .first();
+      const setToNull = (data) => {
+        if (data.length === 0) return {};
 
-        await database.ref().update({
-          [`users/${uid}/languages`]: languages,
-          [`users/${uid}/words/${this.langId}`]: null,
-          [`users/${uid}/practices/${this.langId}`]: null
-        });
-        await languageModel.delete(this.langId);
+        const ids = data.map(({ id }) => id);
+        return ids.reduce((obj, key) => {
+          obj[key] = null;
+          return obj;
+        }, {});
+      };
 
+      request(`/language/delete/${this.langId}`, {
+        method: 'POST',
+        body: JSON.stringify({
+          words: setToNull(words),
+          practices: setToNull(practices)
+        })
+      }).then(async () => {
+        await Language.delete(this.langId);
+        await Practice.delete(({ langId }) => langId === this.langId);
+        await Word.delete(({ langId }) => langId === this.langId);
         this.$modal.hide('confirm');
-
-        if (this.$route.name === 'dashboard-language-id')
-          this.$router.replace('/dashboard');
-      } catch (err) {
-        /* eslint-disable-next-line */
-        console.error(err);
-      }
+        this.$router.replace('/dashboard');
+      });
     },
     showDeleteModal() {
+      const language = this.$options.filters.getLang(this.langId);
+
       this.$modal.show('confirm', {
         title: 'Delete language',
-        text: `Are you sure want to delete ${this.$options.filters.getLang(
-          this.langId
-        )} language`,
+        text: `Are you sure want to delete ${language} language`,
         btn: {
           type: 'danger',
           text: 'Delete',
+          loadingOnClick: true,
           handler: () => this.deleteLanguage()
         }
       });

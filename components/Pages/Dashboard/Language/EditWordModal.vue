@@ -29,7 +29,8 @@
   </modal>
 </template>
 <script>
-import { database } from '~/utils/firebase';
+import Word from '~/models/Word';
+import { request } from '~/utils/firebase';
 
 export default {
   data: () => ({
@@ -44,24 +45,23 @@ export default {
       this.data = params;
     },
     updateWord() {
-      const { langId, id } = this.data;
       this.loading = true;
 
-      database
-        .ref(`users/${this.$store.state.user.localId}/words/${langId}/${id}`)
-        .update({
-          meaning: this.data.meaning
+      request(`/word/${this.data.id}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          word: {
+            meaning: this.data.meaning
+          }
         })
-        .then(async () => {
-          await this.$store
-            .$db()
-            .model('words')
-            .update({
-              where: this.data.id,
-              data: {
-                meaning: this.data.meaning
-              }
-            });
+      })
+        .then(() => {
+          Word.update({
+            where: this.data.id,
+            data: {
+              meaning: this.data.meaning
+            }
+          });
 
           this.clearAll();
         })

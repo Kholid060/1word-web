@@ -7,7 +7,10 @@
     ></failed-load-data>
     <card-ui v-else>
       <template slot="header">
-        <p class="text-overflow flex-auto">Word List</p>
+        <div v-if="loading" class="flex-auto">
+          <skeleton-box-ui type="text" />
+        </div>
+        <p v-else class="text-overflow flex-auto">Word List</p>
         <input-ui
           v-model="search"
           icon="mdi-magnify"
@@ -16,42 +19,9 @@
           placeholder="Search word"
         ></input-ui>
       </template>
-      <div v-if="loading" class="text-center my-6">
-        <circular-progress-ui spinner></circular-progress-ui>
-      </div>
-      <empty-state-ui
-        v-else-if="words.length === 0"
-        icon="mdi-message-processing"
-        title="No Data"
-        description="Add your first word."
-      >
-      </empty-state-ui>
+      <skeleton-box-ui v-if="loading" height="200px" width="100%" />
       <div v-else class="word-list">
-        <template v-for="word in paginateWords">
-          <list-ui :key="word.id" class="list mt-3">
-            <p class="text-overflow pr-2 flex-1">{{ word.title }}</p>
-            <p class="text-overflow flex-1">{{ word.meaning }}</p>
-            <v-popover placement="left">
-              <button-ui icon small>
-                <v-mdi name="mdi-dots-horizontal"></v-mdi>
-              </button-ui>
-              <card-ui slot="popover" class="shadow-xl border">
-                <list-ui @click="$modal.show('edit-word', word)">
-                  <v-mdi slot="prefix" name="mdi-pencil"></v-mdi>
-                  Edit word
-                </list-ui>
-                <list-ui @click="deleteWord(word)">
-                  <v-mdi
-                    slot="prefix"
-                    name="mdi-delete"
-                    class="text-danger"
-                  ></v-mdi>
-                  Delete word
-                </list-ui>
-              </card-ui>
-            </v-popover>
-          </list-ui>
-        </template>
+        <word-component :words="paginateWords"></word-component>
         <p
           v-show="filteredWords.length === 0"
           class="text-center text-light mt-8 mb-12"
@@ -71,16 +41,16 @@
 </template>
 <script>
 import EditWordModal from './EditWordModal.vue';
-import FailedLoadData from '~/components/ui/FailedLoadData.vue';
+import WordComponent from './Words.vue';
 import Word from '~/models/Word';
+import FailedLoadData from '~/components/ui/FailedLoadData.vue';
 import Language from '~/models/Language';
-import { database } from '~/utils/firebase';
+import { request } from '~/utils/firebase';
 import { normalizeData, isObject } from '~/utils/helper';
 
 export default {
-  components: { EditWordModal, FailedLoadData },
+  components: { EditWordModal, FailedLoadData, WordComponent },
   fetch() {
-    const { localId } = this.$store.state.user;
     const { id } = this.$route.params;
     const { retrieveWords } = Language.find(id);
 
@@ -88,10 +58,8 @@ export default {
 
     this.loading = true;
 
-    database
-      .ref(`users/${localId}/words/${id}`)
-      .get()
-      .then((words) => {
+    request(`/word?langId=${id}`)
+      .then(({ words }) => {
         this.loading = this.error = false;
         this.$emit('update:error', false);
 
@@ -110,7 +78,6 @@ export default {
       })
       .catch(() => {
         this.loading = false;
-        this.$emit('update:error', true);
         this.error = true;
       });
   },
@@ -137,26 +104,6 @@ export default {
       const end = start + this.perPage;
 
       return this.filteredWords.slice(start, end);
-    }
-  },
-  activated() {
-    alert('test');
-    this.$emit('update:error', false);
-    this.$fetch();
-  },
-  methods: {
-    deleteWord({ id, langId }) {
-      const { localId } = this.$store.state.user;
-
-      database
-        .ref(`users/${localId}/words/${langId}/${id}`)
-        .remove()
-        .then(() => {
-          this.$store
-            .$db()
-            .model('words')
-            .delete(id);
-        });
     }
   }
 };

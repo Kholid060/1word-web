@@ -10,17 +10,16 @@ export default class Practice extends Model {
       correct: this.number(0),
       wrong: this.number(0),
       score: this.number(0),
-      qLength: this.number(0),
       langId: this.attr(null),
-      timestamp: this.number(0)
+      date: this.number(0)
     };
   }
 
   static beforeSelect(practices) {
     return practices.sort((a, b) => {
-      if (b.timestamp > a.timestamp) {
+      if (b.date > a.date) {
         return 1;
-      } else if (a.timestamp > b.timestamp) {
+      } else if (a.date > b.date) {
         return -1;
       }
 

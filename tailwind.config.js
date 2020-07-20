@@ -58,7 +58,7 @@ module.exports = {
         /graph-svg-tip/,
         /-(leave|enter|appear)(|-(to|from|active))$/
       ],
-      whitelistPatternsChildren: [/wrapper/, /swiper-wrapper/]
+      whitelistPatternsChildren: [/wrapper/]
     }
   },
   theme: {

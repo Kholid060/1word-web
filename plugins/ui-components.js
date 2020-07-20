@@ -13,6 +13,7 @@ import BaseProgress from '~/components/Base/BaseProgress.vue';
 import BaseSelect from '~/components/Base/BaseSelect.vue';
 import BaseSwitch from '~/components/Base/BaseSwitch.vue';
 import BaseTextarea from '~/components/Base/BaseTextarea.vue';
+import BaseSkeletonBox from '~/components/Base/BaseSkeletonBox.vue';
 import '~/assets/scss/components/_table.scss';
 
 Vue.component(BaseButton.name, BaseButton);
@@ -28,3 +29,4 @@ Vue.component(BaseProgress.name, BaseProgress);
 Vue.component(BaseSelect.name, BaseSelect);
 Vue.component(BaseSwitch.name, BaseSwitch);
 Vue.component(BaseTextarea.name, BaseTextarea);
+Vue.component(BaseSkeletonBox.name, BaseSkeletonBox);

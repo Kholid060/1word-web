@@ -1,17 +1,37 @@
 <template>
   <card-ui hover class="language-card cursor-pointer" :class="{ active }">
+    <skeleton-box-ui
+      v-if="loading"
+      height="51px"
+      width="51px"
+    ></skeleton-box-ui>
     <flag-ui
+      v-else
       :code="id | getLang('country')"
       size="51"
       class="flag-container p-1 bg-lighter"
     ></flag-ui>
     <div class="ml-2 language-card__name inline-block align-middle">
-      <p class="leading-snug font-semibold text-overflow">
-        {{ id | getLang }}
-      </p>
-      <p class="leading-snug text-light text-overflow">
-        {{ id | getLang('native') }}
-      </p>
+      <template v-if="loading">
+        <skeleton-box-ui
+          v-if="loading"
+          height="14px"
+          width="90px"
+        ></skeleton-box-ui>
+        <skeleton-box-ui
+          v-if="loading"
+          height="14px"
+          width="70px"
+        ></skeleton-box-ui>
+      </template>
+      <template v-else>
+        <p class="leading-snug font-semibold text-overflow">
+          {{ id | getLang }}
+        </p>
+        <p class="leading-snug text-light text-overflow">
+          {{ id | getLang('native') }}
+        </p>
+      </template>
     </div>
   </card-ui>
 </template>
@@ -19,7 +39,8 @@
 export default {
   props: {
     id: String,
-    active: Boolean
+    active: Boolean,
+    loading: Boolean
   }
 };
 </script>

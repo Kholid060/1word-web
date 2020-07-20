@@ -38,7 +38,8 @@
 </template>
 <script>
 import { supportedLanguages, languageFilter } from '~/utils/getLang';
-import { database } from '~/utils/firebase';
+import { request } from '~/utils/firebase';
+import Language from '~/models/Language';
 
 export default {
   data: () => ({
@@ -56,31 +57,30 @@ export default {
   },
   methods: {
     initData() {
-      const languages = this.$store
-        .$db()
-        .model('languages')
-        .all();
+      const languages = Language.all();
 
       this.languages = supportedLanguages.filter((item) => {
         return !languages.some((language) => item === language.langId);
       });
     },
     addLanguage(langId) {
-      const languageModel = this.$store.$db().model('languages');
-      const languages = languageModel.all().map(({ langId }) => langId);
-
-      database
-        .ref(`users/${this.$store.state.user.localId}/languages`)
-        .set([...languages, langId])
+      request('/language', {
+        method: 'POST',
+        body: JSON.stringify({
+          language: langId
+        })
+      })
         .then(() => {
-          languageModel.insert({
+          Language.insert({
             data: {
               langId
             }
           });
+
           this.$modal.hide('add-language');
         })
-        .catch(() => {
+        .catch((err) => {
+          console.error(err);
           this.$toast.error('Oppss... Something went wrong');
         });
     }

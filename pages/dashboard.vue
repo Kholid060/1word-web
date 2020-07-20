@@ -3,32 +3,25 @@
     <div class="container lg:px-12">
       <dashboard-header></dashboard-header>
       <main class="h-full py-6">
-        <failed-load-data
-          v-if="error"
-          :loading="$fetchState.pending"
-          @fetch="$fetch"
-        ></failed-load-data>
-        <template v-else>
-          <nuxt-child />
-          <div class="text-lighter mt-8">
-            Flag Icons made by
-            <a
-              class="text-primary"
-              href="https://www.flaticon.com/authors/freepik"
-              title="Freepik"
-            >
-              Freepik
-            </a>
-            from
-            <a
-              class="text-primary"
-              href="https://www.flaticon.com/"
-              title="Flaticon"
-            >
-              www.flaticon.com
-            </a>
-          </div>
-        </template>
+        <nuxt-child />
+        <div v-show="languageLength !== 0" class="text-lighter mt-8">
+          Flag Icons made by
+          <a
+            class="text-primary"
+            href="https://www.flaticon.com/authors/freepik"
+            title="Freepik"
+          >
+            Freepik
+          </a>
+          from
+          <a
+            class="text-primary"
+            href="https://www.flaticon.com/"
+            title="Flaticon"
+          >
+            www.flaticon.com
+          </a>
+        </div>
       </main>
     </div>
     <Aside></Aside>
@@ -38,36 +31,15 @@
 <script>
 import DashboardHeader from '~/components/layout/Header.vue';
 import Aside from '~/components/layout/Aside.vue';
-import { database } from '~/utils/firebase';
 import Language from '~/models/Language';
-import FailedLoadData from '~/components/ui/FailedLoadData.vue';
 
 export default {
-  components: { Aside, DashboardHeader, FailedLoadData },
-  fetch() {
-    if (Language.all().length !== 0) return;
-
-    const { localId } = this.$store.state.user;
-    database
-      .ref(`users/${localId}/languages`)
-      .get()
-      .then((languages) => {
-        if (!Array.isArray(languages)) return;
-
-        this.$store.dispatch('entities/create', {
-          entity: 'languages',
-          data: languages.map((langId) => ({ langId }))
-        });
-        this.error = false;
-      })
-      .catch(() => {
-        this.error = true;
-      });
+  components: { Aside, DashboardHeader },
+  computed: {
+    languageLength() {
+      return Language.all().length;
+    }
   },
-  data: () => ({
-    retrieved: false,
-    error: false
-  }),
   mounted() {
     const { extension } = this.$route.query;
 
