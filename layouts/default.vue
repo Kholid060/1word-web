@@ -2,7 +2,7 @@
   <div id="app">
     <nuxt />
     <div
-      class="toasted dark-theme ct-series-a ct-line ct-series-a ct-point ct-label"
+      class="toasted dark-theme ct-series-a ct-area ct-line ct-series-a ct-point ct-label"
       style="display: none"
     ></div>
   </div>

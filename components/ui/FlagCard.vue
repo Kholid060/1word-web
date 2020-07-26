@@ -1,5 +1,9 @@
 <template>
-  <card-ui hover class="language-card cursor-pointer" :class="{ active }">
+  <card-ui
+    :hover="!loading"
+    class="language-card cursor-pointer"
+    :class="{ active }"
+  >
     <skeleton-box-ui
       v-if="loading"
       height="51px"
